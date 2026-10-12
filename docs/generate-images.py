@@ -21,7 +21,7 @@ def shell(w, h, title, body):
             f'<rect width="{w}" height="{h}" fill="url(#bg)"/><circle cx="{int(w*.84)}" cy="{int(h*.18)}" r="{int(min(w,h)*.43)}" fill="{ACCENT}" opacity=".10"/>{body}</svg>')
 def panel(lang, x, y, scale=1):
     d = STR[lang]
-    b = [f'<g transform="translate({x} {y}) scale({scale})"><rect width="326" height="390" rx="20" fill="{PANEL}" stroke="{STROKE}"/>',
+    b = [f'<g transform="translate({x} {y}) scale({scale * 0.877:.3f} {scale * 0.836:.3f})"><rect width="326" height="390" rx="20" fill="{PANEL}" stroke="{STROKE}"/>',
          '<path d="M0 20Q0 0 20 0H306Q326 0 326 20V62H0Z" fill="#202844"/>',
          f'<rect x="12" y="13" width="36" height="36" rx="11" fill="url(#accent)"/>', t(30,38,"L",21,"#fff",900,"middle"),
          t(59,29,"LIVIA PANEL",16,TEXT,900), t(60,46,"MOBILE UTILITY • V2.0",8,MUTED,700),
