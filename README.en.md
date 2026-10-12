@@ -2,8 +2,6 @@
 
 <div align="center">
 
-<img src="docs/images/banner.en.svg" alt="Livia Panel — modern Roblox panel for Speed, Jump, Fly, No Clip, and Flashlight" width="100%">
-
 <a href="https://github.com/akndrn000/LiviaPanel.lua/blob/main/LiviaPanel.lua"><img src="https://img.shields.io/badge/LUA-LIVIA_PANEL-6f74ff?style=for-the-badge&labelColor=111827" alt="Livia Panel Lua"></a>
 <img src="https://img.shields.io/badge/Roblox-utility_panel-2b344b?style=flat-square&logo=roblox&logoColor=white" alt="Roblox utility panel">
 <img src="https://img.shields.io/badge/Mobile-friendly-2b344b?style=flat-square&logo=android&logoColor=white" alt="Mobile friendly">
@@ -15,6 +13,7 @@
 
 [Features](#features) · [Preview](#preview) · [How-to-use](#how-to-use) · [Limitations](#limitations-and-safety)
 
+<img src="docs/images/banner.en.svg" alt="Livia Panel — modern Roblox panel for Speed, Jump, Fly, No Clip, and Flashlight" width="100%">
 </div>
 
 ---
