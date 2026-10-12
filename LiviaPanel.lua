@@ -1,7 +1,7 @@
 --[[
-    Livia Panel v1.0
-    Speed | Jump | Fly | Ghost | ESP Player
-    Tombol hanya aktif saat ditekan (tap), bukan saat panel digeser.
+    Livia Panel v2.0
+    Speed | Jump | Fly | No Clip | Flashlight
+    UI touch-first: tap activates controls; dragging only moves the panel.
 ]]
 
 local Players = game:GetService("Players")
@@ -17,20 +17,21 @@ if CoreGui:FindFirstChild("LiviaPanel") then CoreGui.LiviaPanel:Destroy() end
 -- ==========================================
 -- STATE
 -- ==========================================
-local S = {Speed = false, Jump = false, Fly = false, Ghost = false, ESP = false}
+local S = {Speed = false, Jump = false, Fly = false, NoClip = false, Flashlight = false}
 local V = {Speed = 50, Jump = 100, Fly = 60}
 
 local T = {
-    BG = Color3.fromRGB(16, 17, 24),
-    Panel = Color3.fromRGB(24, 26, 37),
-    Card = Color3.fromRGB(32, 35, 50),
-    Input = Color3.fromRGB(44, 48, 68),
-    Stroke = Color3.fromRGB(58, 63, 90),
-    Accent = Color3.fromRGB(124, 92, 255),
-    Text = Color3.fromRGB(240, 242, 250),
-    Off = Color3.fromRGB(70, 75, 100),
+    BG = Color3.fromRGB(13, 16, 27),
+    Panel = Color3.fromRGB(21, 25, 40),
+    Card = Color3.fromRGB(27, 33, 51),
+    Input = Color3.fromRGB(35, 43, 65),
+    Stroke = Color3.fromRGB(48, 59, 84),
+    Accent = Color3.fromRGB(111, 116, 255),
+    Text = Color3.fromRGB(243, 245, 255),
+    Muted = Color3.fromRGB(155, 164, 189),
+    Off = Color3.fromRGB(55, 64, 86),
     On = Color3.fromRGB(46, 204, 133),
-    Red = Color3.fromRGB(240, 84, 96),
+    Red = Color3.fromRGB(244, 87, 109),
 }
 
 local function corner(o, r) local c = Instance.new("UICorner", o) c.CornerRadius = UDim.new(0, r or 10) return c end
@@ -41,7 +42,8 @@ local function stroke(o) local s = Instance.new("UIStroke", o) s.Color = T.Strok
 -- ==========================================
 local conns = {}
 local bv, bg
-local espCache = {}
+local noclipCache = setmetatable({}, {__mode = "k"})
+local flashlight
 
 local function getChar()
     local char = LP.Character
@@ -57,9 +59,38 @@ local function stopFly()
     if hum then hum.PlatformStand = false end
 end
 
-local function clearESP()
-    for _, h in pairs(espCache) do h:Destroy() end
-    espCache = {}
+local function restoreNoClip()
+    for part, original in pairs(noclipCache) do
+        if part and part.Parent then part.CanCollide = original end
+    end
+    noclipCache = setmetatable({}, {__mode = "k"})
+end
+
+local function setFlashlight(state)
+    if not state then
+        if flashlight then flashlight:Destroy() flashlight = nil end
+        return
+    end
+
+    local char = LP.Character
+    local target = char and (char:FindFirstChild("Head") or char:FindFirstChild("HumanoidRootPart"))
+    if not target then return end
+
+    if flashlight and flashlight.Parent ~= target then
+        flashlight:Destroy()
+        flashlight = nil
+    end
+    if not flashlight then
+        flashlight = Instance.new("SpotLight")
+        flashlight.Name = "LiviaFlashlight"
+        flashlight.Color = Color3.fromRGB(255, 244, 220)
+        flashlight.Brightness = 2.5
+        flashlight.Range = 36
+        flashlight.Angle = 70
+        flashlight.Shadows = false
+        flashlight.Face = Enum.NormalId.Front
+        flashlight.Parent = target
+    end
 end
 
 local function applyChange(key, state)
@@ -67,8 +98,8 @@ local function applyChange(key, state)
     if key == "Speed" and not state and hum then hum.WalkSpeed = 16 end
     if key == "Jump" and not state and hum then hum.UseJumpPower = true hum.JumpPower = 50 end
     if key == "Fly" and not state then stopFly() end
-    if key == "Ghost" and not state and hrp then hrp.CanCollide = true end
-    if key == "ESP" and not state then clearESP() end
+    if key == "NoClip" and not state then restoreNoClip() end
+    if key == "Flashlight" then setFlashlight(state) end
 end
 
 conns[#conns + 1] = RunService.Heartbeat:Connect(function()
@@ -107,38 +138,23 @@ conns[#conns + 1] = RunService.Heartbeat:Connect(function()
         bv.Velocity = vel
     end
 
-    if S.ESP then
-        for _, p in ipairs(Players:GetPlayers()) do
-            if p ~= LP and p.Character then
-                local h = espCache[p]
-                if not h or h.Parent ~= p.Character then
-                    if h then h:Destroy() end
-                    h = Instance.new("Highlight")
-                    h.FillColor = Color3.fromRGB(255, 50, 50)
-                    h.OutlineColor = Color3.new(1, 1, 1)
-                    h.FillTransparency = 0.5
-                    h.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                    h.Parent = p.Character
-                    espCache[p] = h
-                end
-            end
-        end
-    end
+    if S.Flashlight then setFlashlight(true) end
 end)
 
 conns[#conns + 1] = RunService.Stepped:Connect(function()
-    if S.Ghost then
-        local char = LP.Character
-        if char then
-            for _, part in ipairs(char:GetDescendants()) do
-                if part:IsA("BasePart") then part.CanCollide = false end
-            end
+    if not S.NoClip then return end
+    local char = LP.Character
+    if not char then return end
+    for _, part in ipairs(char:GetDescendants()) do
+        if part:IsA("BasePart") then
+            if noclipCache[part] == nil then noclipCache[part] = part.CanCollide end
+            part.CanCollide = false
         end
     end
 end)
 
-conns[#conns + 1] = Players.PlayerRemoving:Connect(function(p)
-    if espCache[p] then espCache[p]:Destroy() espCache[p] = nil end
+conns[#conns + 1] = LP.CharacterAdded:Connect(function()
+    noclipCache = setmetatable({}, {__mode = "k"})
 end)
 
 -- ==========================================
@@ -199,8 +215,8 @@ sg.Name = "LiviaPanel"
 sg.ResetOnSpawn = false
 
 local Main = Instance.new("Frame", sg)
-Main.Size = UDim2.new(0, 300, 0, 342)
-Main.Position = UDim2.new(0.5, -150, 0.5, -171)
+Main.Size = UDim2.new(0, 326, 0, 390)
+Main.Position = UDim2.new(0.5, -163, 0.5, -195)
 Main.BackgroundColor3 = T.BG
 Main.BorderSizePixel = 0
 corner(Main, 14)
@@ -208,11 +224,18 @@ stroke(Main)
 bindDrag(Main, Main)
 
 local Header = Instance.new("Frame", Main)
-Header.Size = UDim2.new(1, 0, 0, 46)
+Header.Size = UDim2.new(1, 0, 0, 62)
 Header.BackgroundColor3 = T.Panel
 Header.BorderSizePixel = 0
 corner(Header, 14)
 bindDrag(Header, Main)
+
+local headerGradient = Instance.new("UIGradient")
+headerGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, T.Panel),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(30, 32, 58)),
+})
+headerGradient.Parent = Header
 
 local hc = Instance.new("Frame", Header)
 hc.Size = UDim2.new(1, 0, 0, 14)
@@ -226,15 +249,43 @@ line.Position = UDim2.new(0, 0, 1, -2)
 line.BackgroundColor3 = T.Accent
 line.BorderSizePixel = 0
 
+local Logo = Instance.new("Frame", Header)
+Logo.Size = UDim2.new(0, 36, 0, 36)
+Logo.Position = UDim2.new(0, 12, 0, 13)
+Logo.BackgroundColor3 = T.Accent
+Logo.BorderSizePixel = 0
+corner(Logo, 11)
+local logoGradient = Instance.new("UIGradient")
+logoGradient.Color = ColorSequence.new(T.Accent, Color3.fromRGB(65, 198, 255))
+logoGradient.Rotation = 35
+logoGradient.Parent = Logo
+local LogoText = Instance.new("TextLabel", Logo)
+LogoText.Size = UDim2.new(1, 0, 1, 0)
+LogoText.BackgroundTransparency = 1
+LogoText.Text = "L"
+LogoText.Font = Enum.Font.GothamBlack
+LogoText.TextSize = 21
+LogoText.TextColor3 = T.Text
+
 local Title = Instance.new("TextLabel", Header)
-Title.Size = UDim2.new(1, -100, 1, -2)
-Title.Position = UDim2.new(0, 14, 0, 0)
+Title.Size = UDim2.new(0, 170, 0, 24)
+Title.Position = UDim2.new(0, 58, 0, 6)
 Title.BackgroundTransparency = 1
 Title.Text = "LIVIA PANEL"
 Title.Font = Enum.Font.GothamBold
-Title.TextSize = 17
+Title.TextSize = 16
 Title.TextColor3 = T.Text
 Title.TextXAlignment = Enum.TextXAlignment.Left
+
+local Subtitle = Instance.new("TextLabel", Header)
+Subtitle.Size = UDim2.new(0, 180, 0, 16)
+Subtitle.Position = UDim2.new(0, 59, 0, 30)
+Subtitle.BackgroundTransparency = 1
+Subtitle.Text = "MOBILE UTILITY  •  V2.0"
+Subtitle.Font = Enum.Font.GothamMedium
+Subtitle.TextSize = 9
+Subtitle.TextColor3 = T.Muted
+Subtitle.TextXAlignment = Enum.TextXAlignment.Left
 
 local function headBtn(x, txt, col)
     local b = Instance.new("TextButton", Header)
@@ -253,8 +304,8 @@ local CloseBtn = headBtn(-44, "X", T.Red)
 local MinBtn = headBtn(-84, "-", T.Input)
 
 local OpenBtn = Instance.new("TextButton", sg)
-OpenBtn.Size = UDim2.new(0, 52, 0, 52)
-OpenBtn.Position = UDim2.new(0, 20, 0.5, -26)
+OpenBtn.Size = UDim2.new(0, 54, 0, 54)
+OpenBtn.Position = UDim2.new(0, 20, 0.5, -27)
 OpenBtn.BackgroundColor3 = T.Accent
 OpenBtn.Text = "L"
 OpenBtn.Font = Enum.Font.GothamBold
@@ -269,8 +320,8 @@ bindDrag(OpenBtn, OpenBtn, function() Main.Visible = true OpenBtn.Visible = fals
 bindDrag(CloseBtn, Main, function() cleanup() end)
 
 local Body = Instance.new("Frame", Main)
-Body.Size = UDim2.new(1, 0, 1, -46)
-Body.Position = UDim2.new(0, 0, 0, 46)
+Body.Size = UDim2.new(1, 0, 1, -62)
+Body.Position = UDim2.new(0, 0, 0, 62)
 Body.BackgroundTransparency = 1
 local pad = Instance.new("UIPadding", Body)
 pad.PaddingTop = UDim.new(0, 10)
@@ -279,28 +330,46 @@ pad.PaddingRight = UDim.new(0, 10)
 local list = Instance.new("UIListLayout", Body)
 list.Padding = UDim.new(0, 8)
 
+local descriptions = {
+    Speed = "Movement speed",
+    Jump = "Jump height",
+    Fly = "Air movement",
+    NoClip = "Disable character collision",
+    Flashlight = "Directional light",
+}
+
 local function createRow(label, key, hasValue)
     local row = Instance.new("Frame", Body)
-    row.Size = UDim2.new(1, 0, 0, 46)
+    row.Size = UDim2.new(1, 0, 0, 50)
     row.BackgroundColor3 = T.Card
     corner(row, 10)
     stroke(row)
     bindDrag(row, Main)
 
     local lb = Instance.new("TextLabel", row)
-    lb.Size = UDim2.new(1, -170, 1, 0)
-    lb.Position = UDim2.new(0, 12, 0, 0)
+    lb.Size = UDim2.new(1, -155, 0, 21)
+    lb.Position = UDim2.new(0, 12, 0, 5)
     lb.BackgroundTransparency = 1
     lb.Text = label
     lb.Font = Enum.Font.GothamBold
-    lb.TextSize = 14
+    lb.TextSize = 12
     lb.TextColor3 = T.Text
     lb.TextXAlignment = Enum.TextXAlignment.Left
 
+    local sub = Instance.new("TextLabel", row)
+    sub.Size = UDim2.new(1, -155, 0, 15)
+    sub.Position = UDim2.new(0, 12, 0, 26)
+    sub.BackgroundTransparency = 1
+    sub.Text = descriptions[key] or ""
+    sub.Font = Enum.Font.Gotham
+    sub.TextSize = 9
+    sub.TextColor3 = T.Muted
+    sub.TextXAlignment = Enum.TextXAlignment.Left
+
     if hasValue then
         local box = Instance.new("TextBox", row)
-        box.Size = UDim2.new(0, 64, 0, 32)
-        box.Position = UDim2.new(1, -150, 0.5, -16)
+        box.Size = UDim2.new(0, 54, 0, 30)
+        box.Position = UDim2.new(1, -130, 0.5, -15)
         box.BackgroundColor3 = T.Input
         box.Text = tostring(V[key])
         box.Font = Enum.Font.GothamBold
@@ -315,8 +384,8 @@ local function createRow(label, key, hasValue)
     end
 
     local btn = Instance.new("TextButton", row)
-    btn.Size = UDim2.new(0, 70, 0, 32)
-    btn.Position = UDim2.new(1, -80, 0.5, -16)
+    btn.Size = UDim2.new(0, 62, 0, 30)
+    btn.Position = UDim2.new(1, -70, 0.5, -15)
     btn.BackgroundColor3 = T.Off
     btn.Text = "OFF"
     btn.Font = Enum.Font.GothamBold
@@ -336,8 +405,8 @@ end
 createRow("SPEED", "Speed", true)
 createRow("JUMP", "Jump", true)
 createRow("FLY", "Fly", true)
-createRow("GHOST", "Ghost", false)
-createRow("ESP PLAYER", "ESP", false)
+createRow("NO CLIP", "NoClip", false)
+createRow("FLASHLIGHT", "Flashlight", false)
 
 -- ==========================================
 -- CLEANUP
