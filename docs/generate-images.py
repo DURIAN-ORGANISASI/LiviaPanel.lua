@@ -75,7 +75,7 @@ def render(kind, lang):
             x=42+i*302
             body += f'<rect x="{x}" y="116" width="278" height="154" rx="18" fill="{CARD}" stroke="{STROKE}"/><circle cx="{x+35}" cy="151" r="17" fill="url(#accent)"/>'
             body += t(x+35,156,str(i+1).zfill(2),10,"#fff",900,"middle") + t(x+22,201,name,17,TEXT,900)
-            details = d["subs"][i] if kind=="workflow" else d["safetySub"][i]
+            details = d["subs"][i] if kind=="workflow" else (d["safetySub"][i] if i < len(d["safetySub"]) else ("Tap to activate" if lang=="en" else "Ketuk untuk aktif"))
             body += t(x+22,232,details,10,MUTED,500)
         return shell(1280,320,title,body)
     if kind == "fly":
