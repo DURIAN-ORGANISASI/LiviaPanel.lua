@@ -1,19 +1,17 @@
-# Livia Panel
-
 <div align="center">
 
-<a href="https://github.com/akndrn000/LiviaPanel.lua/blob/main/LiviaPanel.lua"><img src="https://img.shields.io/badge/LUA-LIVIA_PANEL-6f74ff?style=for-the-badge&labelColor=111827" alt="Livia Panel Lua"></a>
-<img src="https://img.shields.io/badge/Roblox-utility_panel-2b344b?style=flat-square&logo=roblox&logoColor=white" alt="Roblox utility panel">
-<img src="https://img.shields.io/badge/Mobile-friendly-2b344b?style=flat-square&logo=android&logoColor=white" alt="Mobile friendly">
-<img src="https://img.shields.io/badge/License-MIT-2b344b?style=flat-square" alt="MIT License">
-
-[Bahasa Indonesia](README.md) · [English](README.en.md)
-
-**A modern, compact, touch-friendly Lua panel.** Speed, Jump, Fly, No Clip, and Flashlight sit in one draggable, minimizable UI.
-
-[Features](#features) · [Preview](#preview) · [How-to-use](#how-to-use) · [Limitations](#limitations-and-safety)
-
 <img src="docs/images/banner.en.svg" alt="Livia Panel — modern Roblox panel for Speed, Jump, Fly, No Clip, and Flashlight" width="100%">
+
+<p><a href="https://github.com/akndrn000/LiviaPanel.lua/blob/main/LiviaPanel.lua"><img src="https://img.shields.io/badge/OPEN_SCRIPT-LIVIAPANEL.LUA-FFD21F?style=for-the-badge&labelColor=111827" alt="Open Livia Panel script"></a></p>
+
+<p><img src="https://img.shields.io/badge/Lua-2C2D72?style=flat-square&logo=lua&logoColor=white" alt="Lua"> <img src="https://img.shields.io/badge/Roblox-utility_panel-2b344b?style=flat-square&logo=roblox&logoColor=white" alt="Roblox"> <img src="https://img.shields.io/badge/Mobile-friendly-2b344b?style=flat-square&logo=android&logoColor=white" alt="Mobile friendly"> <img src="https://img.shields.io/badge/License-MIT-2b344b?style=flat-square" alt="MIT License"></p>
+
+<p><a href="README.md">Bahasa Indonesia</a> · <a href="README.en.md">English</a></p>
+
+<p><strong>A modern, compact, touch-friendly Lua panel.</strong> Speed, Jump, Fly, No Clip, and Flashlight sit in one draggable, minimizable UI.</p>
+
+<p><a href="#features">Features</a> · <a href="#preview">Preview</a> · <a href="#how-to-use">How to use</a> · <a href="#limitations-and-safety">Limitations</a></p>
+
 </div>
 
 ---
