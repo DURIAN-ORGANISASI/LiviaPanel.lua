@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/brand.svg" alt="Livia Panel" width="88" height="88">
+<img src="docs/brand.svg" alt="Livia Panel" width="84" height="84">
 
 # Livia Panel
 
