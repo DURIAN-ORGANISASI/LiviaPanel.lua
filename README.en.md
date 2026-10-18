@@ -123,7 +123,7 @@ This creates Indonesian and English illustrations in `docs/screenshots/` and the
 
 #### Documentation checks
 
-Run `python3 scripts/check_docs.py` to validate local links, XML syntax, non-empty illustrations, and exact consistency between every SVG and its source generator. This check runs automatically through GitHub Actions; it is not a Roblox runtime test.
+Run `python3 scripts/check_docs.py` to validate local links, XML syntax, non-empty illustrations, and exact consistency between the Fly illustrations shown in the READMEs and their source generator. This check runs automatically through GitHub Actions; it is not a Roblox runtime test.
 
 ### Repository structure
 
