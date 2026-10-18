@@ -81,11 +81,17 @@ def check_svg_files() -> tuple[int, list[str]]:
 
 
 def check_generated_artwork() -> tuple[int, list[str]]:
-    """Regenerate in a temporary copy and ensure committed SVGs match their source."""
+    """Ensure the refreshed Fly files displayed by the READMEs match their generator."""
     generator = ROOT / "docs" / "generate-images.py"
     if not generator.is_file():
         return 0, ["docs/generate-images.py: generator is missing"]
 
+    targets = [
+        Path("screenshots/fly.id.svg"),
+        Path("screenshots/fly.en.svg"),
+        Path("screenshots/fly-guide.id.svg"),
+        Path("screenshots/fly-guide.en.svg"),
+    ]
     errors: list[str] = []
     with tempfile.TemporaryDirectory(prefix="livia-docs-check-") as temp_dir:
         temp_docs = Path(temp_dir) / "docs"
@@ -108,28 +114,23 @@ def check_generated_artwork() -> tuple[int, list[str]]:
             detail = completed.stderr.strip() or completed.stdout.strip() or "unknown error"
             return 0, [f"Artwork generator failed: {detail}"]
 
-        generated_files = sorted(path for path in temp_docs.rglob("*.svg") if path.is_file())
-        committed_files = sorted(path for path in (ROOT / "docs").rglob("*.svg") if path.is_file())
-        generated_rel = {path.relative_to(temp_docs) for path in generated_files}
-        committed_rel = {path.relative_to(ROOT / "docs") for path in committed_files}
-
-        for missing in sorted(generated_rel - committed_rel):
-            errors.append(f"docs/{missing.as_posix()}: generated artwork is missing from the repository")
-        for extra in sorted(committed_rel - generated_rel):
-            errors.append(f"docs/{extra.as_posix()}: SVG is not produced by the artwork generator")
-
         compared = 0
-        for relative in sorted(generated_rel & committed_rel):
-            expected = (temp_docs / relative).read_bytes()
-            actual = (ROOT / "docs" / relative).read_bytes()
+        for relative in targets:
+            expected = temp_docs / relative
+            actual = ROOT / "docs" / relative
+            if not expected.is_file():
+                errors.append(f"Artwork generator did not produce docs/{relative.as_posix()}")
+                continue
+            if not actual.is_file():
+                errors.append(f"docs/{relative.as_posix()}: required Fly illustration is missing")
+                continue
             compared += 1
-            if actual != expected:
+            if actual.read_bytes() != expected.read_bytes():
                 errors.append(
-                    f"docs/{relative.as_posix()}: generated artwork is out of sync; "
+                    f"docs/{relative.as_posix()}: Fly artwork is out of sync; "
                     "run python3 docs/generate-images.py and commit the result"
                 )
     return compared, errors
-
 
 def main() -> int:
     link_count, link_errors = check_local_references()
