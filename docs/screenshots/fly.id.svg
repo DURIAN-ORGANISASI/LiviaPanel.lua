@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="380" viewBox="0 0 1200 380" role="img" aria-labelledby="title desc">
+<title id="title">Livia Panel Fly guide</title><desc id="desc">Joystick menentukan arah dan kamera membantu gerak vertikal.</desc>
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#090E1C"/><stop offset=".56" stop-color="#111A2D"/><stop offset="1" stop-color="#171B39"/></linearGradient>
+ <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#7B82FF"/><stop offset="1" stop-color="#35D4E8"/></linearGradient>
+ <linearGradient id="line" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#7B82FF"/><stop offset="1" stop-color="#35D4E8"/></linearGradient>
+ <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1B2640"/><stop offset="1" stop-color="#11192B"/></linearGradient>
+ <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#91A7D7" fill-opacity=".13"/></pattern>
+ <radialGradient id="glow"><stop stop-color="#7079FF" stop-opacity=".21"/><stop offset="1" stop-color="#7079FF" stop-opacity="0"/></radialGradient>
+</defs>
+<rect width="1200" height="380" rx="22" fill="url(#bg)"/><rect width="1200" height="380" rx="22" fill="url(#dots)"/>
+<ellipse cx="1020" cy="70" rx="370" ry="290" fill="url(#glow)"/><rect x="1" y="1" width="1198" height="378" rx="21" fill="none" stroke="#2B3C59"/>
+320
+</svg>
