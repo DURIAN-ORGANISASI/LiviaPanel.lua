@@ -84,7 +84,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/akndrn000/LiviaPanel.
 
 ### Menggunakan Fly
 
-![Panduan Fly](docs/screenshots/fly.id.svg)
+![Panduan Fly](docs/screenshots/fly-guide.id.svg)
 
 Joystick menentukan arah gerak. Saat bergerak maju, arah pandang kamera ikut memengaruhi gerak naik/turun. Lepaskan joystick untuk menghentikan gerak.
 
@@ -146,7 +146,7 @@ docs/
     ├── features.id.svg / features.en.svg
     ├── workflow.id.svg / workflow.en.svg
     ├── controls.id.svg / controls.en.svg
-    ├── fly.id.svg / fly.en.svg
+    ├── fly.id.svg / fly.en.svg / fly-guide.id.svg / fly-guide.en.svg
     ├── safety.id.svg / safety.en.svg
     └── social-preview.svg
 ~~~
