@@ -1,141 +1,155 @@
 <div align="center">
 
-<img src="docs/images/banner.id.svg" alt="Livia Panel — panel Roblox modern untuk Speed, Jump, Fly, No Clip, dan Flashlight" width="100%">
+<img src="docs/brand.svg" alt="Livia Panel" width="88" height="88">
 
-<p><a href="https://github.com/akndrn000/LiviaPanel.lua/blob/main/LiviaPanel.lua"><img src="https://img.shields.io/badge/BUKA_SCRIPT-LIVIAPANEL.LUA-FFD21F?style=for-the-badge&labelColor=111827" alt="Buka skrip Livia Panel"></a></p>
+# Livia Panel
 
-<p><img src="https://img.shields.io/badge/Lua-2C2D72?style=flat-square&logo=lua&logoColor=white" alt="Lua"> <img src="https://img.shields.io/badge/Roblox-utility_panel-2b344b?style=flat-square&logo=roblox&logoColor=white" alt="Roblox"> <img src="https://img.shields.io/badge/Mobile-friendly-2b344b?style=flat-square&logo=android&logoColor=white" alt="Mobile friendly"> <img src="https://img.shields.io/badge/License-MIT-2b344b?style=flat-square" alt="MIT License"></p>
+<p>
+  <img src="https://img.shields.io/badge/Lua-2C2D72?style=flat&logo=lua&logoColor=white" alt="Lua">
+  <img src="https://img.shields.io/badge/Roblox-Utility%20UI-202A43?style=flat&logo=roblox&logoColor=white" alt="Roblox utility UI">
+  <img src="https://img.shields.io/badge/Touch--friendly-Mobile-4B82FF?style=flat&logo=android&logoColor=white" alt="Touch friendly">
+  <img src="https://img.shields.io/badge/Single--file-Script-35C9DD?style=flat" alt="Single file script">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-27B58A?style=flat" alt="MIT License"></a>
+</p>
 
 <p><a href="README.md">Bahasa Indonesia</a> · <a href="README.en.md">English</a></p>
 
-<p><strong>Panel Lua bergaya modern, ringkas, dan nyaman disentuh.</strong> Speed, Jump, Fly, No Clip, dan Flashlight berada dalam satu UI yang dapat digeser dan diminimalkan.</p>
+<p><strong>Satu panel. Lima kontrol. Dibuat untuk layar sentuh.</strong><br>
+Speed, Jump, Fly, No Clip, dan Flashlight dalam satu skrip Lua yang ringkas, dapat digeser, dan dapat diminimalkan.</p>
 
-<p><a href="#fitur">Fitur</a> · <a href="#pratinjau">Pratinjau</a> · <a href="#cara-pakai">Cara pakai</a> · <a href="#batasan-dan-keamanan">Batasan</a></p>
+<p>
+  <a href="#mulai-cepat">Mulai cepat</a> ·
+  <a href="#fitur">Fitur</a> ·
+  <a href="#panduan-penggunaan">Panduan</a> ·
+  <a href="#batasan-dan-keamanan">Keamanan</a> ·
+  <a href="#pengembangan">Pengembangan</a>
+</p>
 
 </div>
 
 ---
 
-## Ringkasan
+![Ilustrasi antarmuka Livia Panel](docs/screenshots/banner.id.svg)
 
-Livia Panel adalah skrip satu file untuk lingkungan Roblox yang mendukung eksekusi Lua sisi klien. Tampilan diperbarui dengan tema gelap, aksen gradien, label pendukung, dan tombol yang lebih mudah disentuh di layar kecil. Skrip tidak membutuhkan library UI eksternal.
+## Tentang proyek
 
-## Pratinjau
+**Livia Panel** adalah skrip Lua satu file untuk lingkungan Roblox yang mendukung dan mengizinkan eksekusi skrip sisi klien. Panel menggabungkan kontrol gerakan dan pencahayaan dalam UI bertema gelap dengan aksen indigo-sian, target sentuh besar, dan kontrol panel yang sederhana.
 
-<div align="center">
-<img src="docs/images/preview.id.svg" alt="Pratinjau panel Livia dengan lima fitur dan tombol modern" width="100%">
-</div>
+Tidak membutuhkan library UI eksternal. File utama ada di [`LiviaPanel.lua`](LiviaPanel.lua).
 
-## Fitur
+> **Catatan:** gambar di README merupakan ilustrasi antarmuka untuk dokumentasi, bukan tangkapan layar langsung dari Roblox. Perilaku skrip tetap bergantung pada game dan lingkungan eksekusi.
 
-<div align="center">
-<img src="docs/images/features.id.svg" alt="Lima fitur Livia Panel: Speed, Jump, Fly, No Clip, Flashlight" width="100%">
-</div>
+## Mulai cepat
 
-| Fitur | Kontrol | Keterangan |
-| --- | --- | --- |
-| **Speed** | Nilai + ON/OFF | Mengatur WalkSpeed saat aktif. Nilai awal 50. |
-| **Jump** | Nilai + ON/OFF | Mengatur JumpPower saat aktif. Nilai awal 100. |
-| **Fly** | Nilai + ON/OFF | Gerak udara memakai kamera dan joystick. Nilai awal 60. |
-| **No Clip** | ON/OFF | Menonaktifkan CanCollide pada bagian karakter saat aktif, lalu memulihkan nilai yang tercatat saat dimatikan. |
-| **Flashlight** | ON/OFF | Menambahkan SpotLight berwarna hangat pada kepala karakter, jika bagian tersebut tersedia. |
-| **Panel** | Geser / Minimize / Tutup | Panel dapat digeser; tombol minimize mengubahnya menjadi tombol L untuk membuka kembali. |
+1. Buka [`LiviaPanel.lua`](LiviaPanel.lua).
+2. Salin skrip dan jalankan hanya pada pengalaman milikmu atau lingkungan yang secara eksplisit mengizinkan skrip Lua sisi klien.
+3. Ketuk tombol **OFF** untuk mengaktifkan fitur. Untuk Speed, Jump, dan Fly, sesuaikan nilai angkanya.
+4. Geser panel melalui area header. Gunakan tombol minus untuk minimize atau **X** untuk menutup dan membersihkan fitur.
 
-## Cara pakai
-
-<div align="center">
-<img src="docs/images/workflow.id.svg" alt="Alur penggunaan: salin skrip, jalankan di lingkungan yang didukung, aktifkan fitur, dan sesuaikan nilai" width="100%">
-</div>
-
-1. Buka [LiviaPanel.lua](LiviaPanel.lua), lalu salin isi skrip.
-2. Jalankan hanya pada lingkungan Roblox yang kamu miliki atau yang memang mengizinkan skrip sisi klien. Dukungan eksekusi berbeda-beda menurut lingkungan.
-3. Ketuk tombol OFF untuk mengaktifkan fitur. Untuk Speed, Jump, atau Fly, ubah nilai angka terlebih dahulu atau saat fitur aktif.
-4. Geser panel dari area kosong/header. Gunakan tombol minus untuk minimize atau X untuk menutup dan membersihkan fitur yang aktif.
-
-Alternatif pemuatan jarak jauh, hanya pada lingkungan yang mendukungnya:
+Opsional: pemuatan dari URL mentah pada lingkungan yang memang mendukung `loadstring` dan `HttpGet`:
 
 ~~~lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/akndrn000/LiviaPanel.lua/main/LiviaPanel.lua"))()
 ~~~
 
-## Kontrol panel
+## Fitur
 
-<div align="center">
-<img src="docs/images/controls.id.svg" alt="Panduan ketuk, geser, minimize, dan tutup panel" width="100%">
-</div>
+![Ringkasan fitur Livia Panel](docs/screenshots/features.id.svg)
+
+| Fitur | Nilai awal | Fungsi |
+| --- | ---: | --- |
+| **Speed** | 50 | Mengatur `Humanoid.WalkSpeed` saat aktif. |
+| **Jump** | 100 | Mengatur `Humanoid.JumpPower` saat aktif. |
+| **Fly** | 60 | Gerak udara dengan arah joystick dan orientasi kamera. |
+| **No Clip** | OFF | Mengubah `CanCollide` pada bagian karakter lokal dan mencatat nilai awal untuk pemulihan. |
+| **Flashlight** | OFF | Menambahkan `SpotLight` lokal pada kepala atau `HumanoidRootPart` jika tersedia. |
+| **Panel** | — | Panel bisa digeser, diminimalkan menjadi tombol **L**, dan ditutup. |
+
+## Panduan penggunaan
+
+![Alur penggunaan Livia Panel](docs/screenshots/workflow.id.svg)
+
+### Kontrol panel
+
+![Panduan kontrol panel](docs/screenshots/controls.id.svg)
 
 | Aksi | Hasil |
 | --- | --- |
-| Ketuk tombol | Mengubah status ON/OFF. |
-| Geser lebih dari 10 px | Memindahkan panel tanpa mengaktifkan tombol. |
-| Tombol minus | Menyembunyikan panel utama dan menampilkan tombol L. |
-| Tombol X | Mematikan fitur melalui fungsi cleanup, memutus koneksi, dan menghapus UI. |
+| Ketuk toggle | Mengubah status ON/OFF. |
+| Geser lebih dari 10 px | Memindahkan panel tanpa sengaja mengaktifkan tombol. |
+| Tombol minus | Menyembunyikan panel utama dan menampilkan tombol **L** untuk membuka kembali. |
+| Tombol X | Menjalankan cleanup, menghentikan fitur yang dikelola, memutus koneksi event, dan menghapus UI. |
 
-### Penggunaan Fly
+### Menggunakan Fly
 
-<div align="center">
-<img src="docs/images/fly.id.svg" alt="Petunjuk Fly: joystick mengatur arah gerak dan kemiringan kamera memengaruhi gerakan vertikal" width="100%">
-</div>
+![Panduan Fly](docs/screenshots/fly.id.svg)
 
-Joystick menentukan arah gerak. Ketika bergerak maju, arah kamera memengaruhi gerak naik/turun. Lepaskan joystick untuk berhenti bergerak.
+Joystick menentukan arah gerak. Saat bergerak maju, arah pandang kamera ikut memengaruhi gerak naik/turun. Lepaskan joystick untuk menghentikan gerak.
 
-## Nilai dan mekanisme bawaan
+## Nilai bawaan dan pemulihan
 
-| Fitur | Nilai awal | Saat OFF |
-| --- | --- | --- |
-| Speed | 50 | WalkSpeed dikembalikan ke 16. |
-| Jump | 100 | JumpPower dikembalikan ke 50. |
-| Fly | 60 | Gaya terbang dilepas. |
-| No Clip | OFF | Nilai CanCollide tersimpan dipulihkan untuk bagian karakter yang masih ada. |
-| Flashlight | OFF | SpotLight buatan skrip dihapus. |
+| Fitur | Saat OFF |
+| --- | --- |
+| Speed | `WalkSpeed` diatur kembali ke 16. |
+| Jump | `JumpPower` diatur kembali ke 50. |
+| Fly | Gaya gerak terbang yang dibuat skrip dihapus. |
+| No Clip | Nilai `CanCollide` yang tercatat dipulihkan untuk bagian karakter yang masih ada. |
+| Flashlight | `SpotLight` yang dibuat skrip dihapus. |
 
-> [!NOTE]
-> Speed dan Jump memakai nilai pemulihan tetap 16 dan 50. Game yang memiliki sistem gerak khusus mungkin menggunakan nilai berbeda. Beberapa perubahan fisika dapat dikoreksi oleh server.
+> Speed dan Jump memakai nilai pemulihan tetap, yaitu 16 dan 50. Pengalaman dengan sistem gerak khusus mungkin memiliki nilai default berbeda. Perubahan fisika juga dapat dikoreksi oleh server.
 
 ## Batasan dan keamanan
 
-<div align="center">
-<img src="docs/images/safety.id.svg" alt="Catatan keamanan: efek berjalan di klien, server game tetap berwenang, dan gunakan hanya di lingkungan yang diizinkan" width="100%">
-</div>
+![Catatan keamanan dan batasan](docs/screenshots/safety.id.svg)
 
-- No Clip mengubah CanCollide pada karakter lokal. Game yang memakai otoritas fisika server dapat mengabaikan atau mengoreksi pergerakan tersebut.
-- Flashlight dibuat sebagai SpotLight lokal pada karakter. Efek dan jarak cahaya dapat terlihat berbeda menurut pencahayaan dan lingkungan.
-- Skrip pihak ketiga dapat bertentangan dengan aturan game, diblokir, atau berhenti berfungsi setelah perubahan Roblox. Gunakan hanya di pengalaman milik sendiri atau lingkungan yang mengizinkannya.
-- Skrip ini tidak mengakses akun, cookie, kata sandi, atau kredensial.
+- **Perilaku sisi klien:** perubahan lokal tidak selalu direplikasi ke server. Game dapat mengabaikan atau mengoreksi perubahan gerakan.
+- **No Clip:** hanya mengubah properti `CanCollide` pada karakter yang diproses skrip. Ini tidak menjamin dapat melewati sistem tabrakan yang dikendalikan server.
+- **Flashlight:** cahaya dibuat secara lokal; tampilan dan jangkauan bergantung pada pencahayaan pengalaman.
+- **Kompatibilitas:** Roblox atau game dapat berubah sehingga skrip tidak lagi berfungsi seperti sebelumnya.
+- **Gunakan secara bertanggung jawab:** jalankan hanya di pengalaman milikmu atau lingkungan yang secara eksplisit mengizinkan skrip pihak ketiga. Patuhi aturan pembuat pengalaman dan ketentuan Roblox.
+- Skrip ini tidak membutuhkan kata sandi, cookie, atau kredensial akun.
 
-## Struktur repositori
+## Pengembangan
 
-~~~text
-LiviaPanel.lua
-README.md
-README.en.md
-docs/
-  generate-images.py
-  images/
-    banner.id.svg / banner.en.svg
-    preview.id.svg / preview.en.svg
-    features.id.svg / features.en.svg
-    workflow.id.svg / workflow.en.svg
-    controls.id.svg / controls.en.svg
-    fly.id.svg / fly.en.svg
-    safety.id.svg / safety.en.svg
-    social-preview.svg
-~~~
-
-### Membuat ulang ilustrasi
-
-Jalankan perintah berikut dari folder repositori dengan Python 3:
+Skrip utama sengaja dipertahankan sebagai satu file. Ilustrasi README adalah SVG dan dapat dibuat ulang tanpa paket Python eksternal.
 
 ~~~bash
 python3 docs/generate-images.py
 ~~~
 
-Gambar dibuat sebagai SVG sehingga tetap tajam saat diperbesar. Generator tidak membutuhkan paket Python eksternal.
+Perintah di atas menghasilkan ilustrasi Bahasa Indonesia dan Inggris di `docs/screenshots/` serta logo di `docs/brand.svg`.
+
+### Struktur repositori
+
+~~~text
+LiviaPanel.lua
+README.md
+README.en.md
+LICENSE
+docs/
+├── generate-images.py
+├── brand.svg
+└── screenshots/
+    ├── banner.id.svg / banner.en.svg
+    ├── preview.id.svg / preview.en.svg
+    ├── features.id.svg / features.en.svg
+    ├── workflow.id.svg / workflow.en.svg
+    ├── controls.id.svg / controls.en.svg
+    ├── fly.id.svg / fly.en.svg
+    ├── safety.id.svg / safety.en.svg
+    └── social-preview.svg
+~~~
 
 ## Kontribusi
 
-Perubahan dan laporan bug dipersilakan melalui Issues atau Pull Requests. Saat mengusulkan perubahan fitur, sertakan juga pembaruan dokumentasi ID/EN dan ilustrasi yang relevan.
+Laporan bug dan usulan perbaikan dipersilakan melalui Issues atau Pull Requests. Sertakan langkah reproduksi yang jelas dan, bila relevan, pembaruan untuk README Bahasa Indonesia/Inggris serta ilustrasi yang terkait. Jangan sertakan informasi pribadi atau kredensial akun.
 
 ## Lisensi
 
-Dirilis dengan lisensi MIT. Lihat [LICENSE](LICENSE).
+Dirilis di bawah [MIT License](LICENSE).
+
+---
+
+<div align="center">
+  <sub>Livia Panel · Lua satu file, kontrol ringkas, dan UI yang mengutamakan sentuhan.</sub>
+</div>
