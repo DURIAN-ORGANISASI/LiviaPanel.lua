@@ -5,11 +5,10 @@
 # Livia Panel
 
 <p>
-  <img src="https://img.shields.io/badge/Lua-2C2D72?style=flat&logo=lua&logoColor=white" alt="Lua">
-  <img src="https://img.shields.io/badge/Roblox-Utility%20UI-202A43?style=flat&logo=roblox&logoColor=white" alt="Roblox utility UI">
-  <img src="https://img.shields.io/badge/Touch--friendly-Mobile-4B82FF?style=flat&logo=android&logoColor=white" alt="Touch friendly">
-  <img src="https://img.shields.io/badge/Single--file-Script-35C9DD?style=flat" alt="Single file script">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-27B58A?style=flat" alt="MIT License"></a>
+  <a href="https://github.com/akndrn000/LiviaPanel.lua/actions/workflows/docs.yml"><img alt="Documentation checks" src="https://img.shields.io/github/actions/workflow/status/akndrn000/LiviaPanel.lua/docs.yml?branch=main&label=docs%20check&logo=githubactions&logoColor=white"></a>
+  <img src="https://img.shields.io/badge/Luau-Roblox%20scripting-2C2D72?style=flat&logo=lua&logoColor=white" alt="Luau">
+  <img src="https://img.shields.io/badge/Single--file-Script-35C9DD?style=flat" alt="Single-file script">
+  <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/github/license/akndrn000/LiviaPanel.lua?label=license"></a>
 </p>
 
 <p><a href="README.md">Bahasa Indonesia</a> · <a href="README.en.md">English</a></p>
@@ -22,7 +21,10 @@ Speed, Jump, Fly, No Clip, dan Flashlight dalam satu skrip Lua yang ringkas, dap
   <a href="#fitur">Fitur</a> ·
   <a href="#panduan-penggunaan">Panduan</a> ·
   <a href="#batasan-dan-keamanan">Keamanan</a> ·
-  <a href="#pengembangan">Pengembangan</a>
+  <a href="#pengembangan">Pengembangan</a> ·
+  <a href="#sumber-atribusi-dan-lisensi">Sumber &amp; lisensi</a> ·
+  <a href="#kontribusi">Kontribusi</a> ·
+  <a href="#keamanan-proyek">Keamanan</a>
 </p>
 
 </div>
@@ -46,7 +48,7 @@ Tidak membutuhkan library UI eksternal. File utama ada di [`LiviaPanel.lua`](Liv
 3. Ketuk tombol **OFF** untuk mengaktifkan fitur. Untuk Speed, Jump, dan Fly, sesuaikan nilai angkanya.
 4. Geser panel melalui area header. Gunakan tombol minus untuk minimize atau **X** untuk menutup dan membersihkan fitur.
 
-Opsional: pemuatan dari URL mentah pada lingkungan yang memang mendukung `loadstring` dan `HttpGet`:
+Opsional: pemuatan dari URL mentah hanya untuk lingkungan yang memang mengizinkan `loadstring` dan `HttpGet`. Periksa skrip sebelum menjalankannya; jangan gunakan executor untuk melewati aturan atau keamanan pengalaman Roblox:
 
 ~~~lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/akndrn000/LiviaPanel.lua/main/LiviaPanel.lua"))()
@@ -106,7 +108,7 @@ Joystick menentukan arah gerak. Saat bergerak maju, arah pandang kamera ikut mem
 - **No Clip:** hanya mengubah properti `CanCollide` pada karakter yang diproses skrip. Ini tidak menjamin dapat melewati sistem tabrakan yang dikendalikan server.
 - **Flashlight:** cahaya dibuat secara lokal; tampilan dan jangkauan bergantung pada pencahayaan pengalaman.
 - **Kompatibilitas:** Roblox atau game dapat berubah sehingga skrip tidak lagi berfungsi seperti sebelumnya.
-- **Gunakan secara bertanggung jawab:** jalankan hanya di pengalaman milikmu atau lingkungan yang secara eksplisit mengizinkan skrip pihak ketiga. Patuhi aturan pembuat pengalaman dan ketentuan Roblox.
+- **Aturan Roblox:** gunakan untuk mengembangkan atau menguji pengalaman milikmu sendiri atau lingkungan yang secara eksplisit mengizinkan penggunaan ini. Jangan memakai fitur gerak/tabrakan untuk mendapat keuntungan tidak adil di pengalaman orang lain. Roblox menyatakan cheating/exploiting melanggar Ketentuan Penggunaan dan dapat menyebabkan akun dihapus ([panduan resmi](https://en.help.roblox.com/hc/id/articles/203312450-Kecurangan-dan-Eksploitasi)).
 - Skrip ini tidak membutuhkan kata sandi, cookie, atau kredensial akun.
 
 ## Pengembangan
@@ -119,6 +121,10 @@ python3 docs/generate-images.py
 
 Perintah di atas menghasilkan ilustrasi Bahasa Indonesia dan Inggris di `docs/screenshots/` serta logo di `docs/brand.svg`.
 
+#### Pemeriksaan dokumentasi
+
+Jalankan `python3 scripts/check_docs.py` untuk memeriksa referensi file lokal dan memastikan seluruh SVG dapat diparse sebagai XML. Pemeriksaan ini dijalankan otomatis lewat GitHub Actions; ini bukan tes runtime di Roblox.
+
 ### Struktur repositori
 
 ~~~text
@@ -126,8 +132,13 @@ LiviaPanel.lua
 README.md
 README.en.md
 LICENSE
+CONTRIBUTING.md
+SECURITY.md
+scripts/
+└── check_docs.py
 docs/
 ├── generate-images.py
+├── SOURCES.md
 ├── brand.svg
 └── screenshots/
     ├── banner.id.svg / banner.en.svg
@@ -140,13 +151,31 @@ docs/
     └── social-preview.svg
 ~~~
 
+## Sumber, atribusi, dan lisensi
+
+### Sumber rujukan
+
+- [Roblox Creator Hub — Scripting](https://create.roblox.com/docs/id-id/scripting), [Luau](https://create.roblox.com/docs/id-id/luau), dan [referensi API Roblox](https://create.roblox.com/docs/reference/engine) dipakai sebagai referensi konsep bahasa serta API. Ini bukan klaim bahwa proyek merupakan kode resmi Roblox.
+- [Dukungan Roblox — Kecurangan dan Eksploitasi](https://en.help.roblox.com/hc/id/articles/203312450-Kecurangan-dan-Eksploitasi) untuk kebijakan penggunaan yang bertanggung jawab.
+- Daftar sumber, cakupan atribusi, dan catatan lisensi tersedia di [`docs/SOURCES.md`](docs/SOURCES.md).
+
+### Atribusi aset
+
+Logo dan ilustrasi SVG di `docs/` adalah artwork dokumentasi proyek yang dihasilkan oleh [`docs/generate-images.py`](docs/generate-images.py) menggunakan pustaka standar Python. Gambar tersebut merupakan mockup/diagram, bukan tangkapan layar langsung dari Roblox. Proyek tidak membundel library UI eksternal.
+
+Roblox, Roblox Studio, dan merek pihak ketiga lainnya tetap menjadi milik pemiliknya masing-masing. Livia Panel adalah proyek independen dan tidak berafiliasi dengan, disponsori oleh, atau didukung oleh Roblox Corporation.
+
+### Lisensi MIT
+
+Repositori ini menggunakan [MIT License](LICENSE), dengan pemberitahuan hak cipta 2026 di dalam file `LICENSE`. Lisensi mengizinkan penggunaan, modifikasi, dan redistribusi materi proyek yang tercakup, dengan syarat pemberitahuan hak cipta dan izin dipertahankan. Lisensi ini tidak memberikan hak atas merek dagang atau layanan Roblox. Baca teks `LICENSE` untuk ketentuan lengkapnya.
+
 ## Kontribusi
 
-Laporan bug dan usulan perbaikan dipersilakan melalui Issues atau Pull Requests. Sertakan langkah reproduksi yang jelas dan, bila relevan, pembaruan untuk README Bahasa Indonesia/Inggris serta ilustrasi yang terkait. Jangan sertakan informasi pribadi atau kredensial akun.
+Kontribusi dipersilakan melalui Issues atau Pull Requests. Baca [`CONTRIBUTING.md`](CONTRIBUTING.md) untuk pemeriksaan yang perlu dijalankan dan [`SECURITY.md`](SECURITY.md) untuk pelaporan masalah keamanan. Jangan sertakan informasi pribadi, token, atau kredensial akun.
 
-## Lisensi
+## Keamanan proyek
 
-Dirilis di bawah [MIT License](LICENSE).
+Gunakan hanya di pengalaman milikmu sendiri atau lingkungan yang secara eksplisit memberi izin. Jangan memakai Speed, Jump, Fly, atau No Clip untuk mendapatkan keuntungan tidak adil di pengalaman orang lain. Roblox menyatakan cheating/exploiting melanggar Ketentuan Penggunaan dan dapat menyebabkan akun dihapus. Lihat [panduan resmi Roblox](https://en.help.roblox.com/hc/id/articles/203312450-Kecurangan-dan-Eksploitasi).
 
 ---
 

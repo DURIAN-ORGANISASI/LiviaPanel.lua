@@ -5,11 +5,10 @@
 # Livia Panel
 
 <p>
-  <img src="https://img.shields.io/badge/Lua-2C2D72?style=flat&logo=lua&logoColor=white" alt="Lua">
-  <img src="https://img.shields.io/badge/Roblox-Utility%20UI-202A43?style=flat&logo=roblox&logoColor=white" alt="Roblox utility UI">
-  <img src="https://img.shields.io/badge/Touch--friendly-Mobile-4B82FF?style=flat&logo=android&logoColor=white" alt="Touch friendly">
+  <a href="https://github.com/akndrn000/LiviaPanel.lua/actions/workflows/docs.yml"><img alt="Documentation checks" src="https://img.shields.io/github/actions/workflow/status/akndrn000/LiviaPanel.lua/docs.yml?branch=main&label=docs%20check&logo=githubactions&logoColor=white"></a>
+  <img src="https://img.shields.io/badge/Luau-Roblox%20scripting-2C2D72?style=flat&logo=lua&logoColor=white" alt="Luau">
   <img src="https://img.shields.io/badge/Single--file-Script-35C9DD?style=flat" alt="Single-file script">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-27B58A?style=flat" alt="MIT License"></a>
+  <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/github/license/akndrn000/LiviaPanel.lua?label=license"></a>
 </p>
 
 <p><a href="README.md">Bahasa Indonesia</a> · <a href="README.en.md">English</a></p>
@@ -22,7 +21,10 @@ Speed, Jump, Fly, No Clip, and Flashlight in one compact Lua script with a dragg
   <a href="#features">Features</a> ·
   <a href="#usage-guide">Usage guide</a> ·
   <a href="#limitations-and-safety">Safety</a> ·
-  <a href="#development">Development</a>
+  <a href="#development">Development</a> ·
+  <a href="#sources-attribution-and-license">Sources &amp; license</a> ·
+  <a href="#contributing">Contributing</a> ·
+  <a href="#project-security">Security</a>
 </p>
 
 </div>
@@ -46,7 +48,7 @@ No external UI library is required. The main file is [`LiviaPanel.lua`](LiviaPan
 3. Tap **OFF** to enable a feature. For Speed, Jump, and Fly, adjust the numeric value.
 4. Drag the panel from its header. Use the minus button to minimize it or **X** to close and clean up the features.
 
-Optional: load from the raw URL in environments that support `loadstring` and `HttpGet`:
+Optional: load from the raw URL only in an environment that explicitly permits `loadstring` and `HttpGet`. Review the script before running it; do not use an executor to bypass Roblox experience rules or security:
 
 ~~~lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/akndrn000/LiviaPanel.lua/main/LiviaPanel.lua"))()
@@ -106,7 +108,7 @@ The joystick sets movement direction. While moving forward, camera pitch also in
 - **No Clip:** only changes the `CanCollide` property of character parts processed by the script. It does not guarantee bypassing server-controlled collision systems.
 - **Flashlight:** the light is created locally; appearance and range depend on the experience's lighting.
 - **Compatibility:** Roblox or individual experiences may change, which can cause the script to stop working as expected.
-- **Use responsibly:** run only in experiences you own or environments that explicitly permit third-party scripts. Follow the experience creator's rules and Roblox's terms.
+- **Roblox rules:** use this to develop or test your own experiences or an environment that explicitly authorizes this use. Do not use movement/collision features for an unfair advantage in other creators' experiences. Roblox states that cheating/exploiting violates its Terms of Use and can lead to account deletion ([official guidance](https://en.help.roblox.com/hc/en-us/articles/203312450-Cheating-and-Exploiting)).
 - The script does not require passwords, cookies, or account credentials.
 
 ## Development
@@ -119,6 +121,10 @@ python3 docs/generate-images.py
 
 This creates Indonesian and English illustrations in `docs/screenshots/` and the logo at `docs/brand.svg`.
 
+#### Documentation checks
+
+Run `python3 scripts/check_docs.py` to validate local file references and confirm every SVG parses as XML. This check runs automatically through GitHub Actions; it is not a Roblox runtime test.
+
 ### Repository structure
 
 ~~~text
@@ -126,8 +132,13 @@ LiviaPanel.lua
 README.md
 README.en.md
 LICENSE
+CONTRIBUTING.md
+SECURITY.md
+scripts/
+└── check_docs.py
 docs/
 ├── generate-images.py
+├── SOURCES.md
 ├── brand.svg
 └── screenshots/
     ├── banner.id.svg / banner.en.svg
@@ -140,13 +151,31 @@ docs/
     └── social-preview.svg
 ~~~
 
+## Sources, attribution, and license
+
+### Reference sources
+
+- [Roblox Creator Hub — Scripting](https://create.roblox.com/docs/scripting), [Luau](https://create.roblox.com/docs/luau), and the [Roblox Engine API reference](https://create.roblox.com/docs/reference/engine) are technical references for language concepts and APIs. This does not mean the project is official Roblox code.
+- [Roblox Support — Cheating and Exploiting](https://en.help.roblox.com/hc/en-us/articles/203312450-Cheating-and-Exploiting) provides the relevant responsible-use policy.
+- See [`docs/SOURCES.md`](docs/SOURCES.md) for the source list, attribution scope, and licensing notes.
+
+### Artwork attribution
+
+The logo and SVG illustrations in `docs/` are project documentation artwork generated by [`docs/generate-images.py`](docs/generate-images.py) using Python's standard library. They are mockups/diagrams, not screenshots captured from a live Roblox session. The project does not bundle an external UI library.
+
+Roblox, Roblox Studio, and other third-party marks remain the property of their respective owners. Livia Panel is an independent project and is not affiliated with, sponsored by, or endorsed by Roblox Corporation.
+
+### MIT license
+
+This repository uses the [MIT License](LICENSE), with the 2026 copyright notice shown in the `LICENSE` file. The license permits use, modification, and redistribution of the covered project material, provided the copyright and permission notice are retained. It does not grant rights to Roblox trademarks or services. Read the full `LICENSE` text for its terms.
+
 ## Contributing
 
-Bug reports and improvements are welcome through Issues or Pull Requests. Include clear reproduction steps and, when relevant, update both Indonesian and English documentation plus related illustrations. Do not include personal information or account credentials.
+Contributions are welcome through Issues or Pull Requests. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the expected checks and [`SECURITY.md`](SECURITY.md) for security reporting. Do not include personal information, tokens, or account credentials.
 
-## License
+## Project security
 
-Released under the [MIT License](LICENSE).
+Use this only in experiences you own or in environments that explicitly authorize it. Do not use Speed, Jump, Fly, or No Clip to gain an unfair advantage in other creators' experiences. Roblox states that cheating/exploiting violates its Terms of Use and can lead to account deletion. See [Roblox's official guidance](https://en.help.roblox.com/hc/en-us/articles/203312450-Cheating-and-Exploiting).
 
 ---
 

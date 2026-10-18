@@ -1,0 +1,38 @@
+name: Documentation checks
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "README*.md"
+      - "CONTRIBUTING.md"
+      - "SECURITY.md"
+      - "docs/**"
+      - "scripts/check_docs.py"
+      - ".github/workflows/docs.yml"
+  pull_request:
+    paths:
+      - "README*.md"
+      - "CONTRIBUTING.md"
+      - "SECURITY.md"
+      - "docs/**"
+      - "scripts/check_docs.py"
+      - ".github/workflows/docs.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-documentation:
+    name: Validate links and SVG XML
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+      - name: Validate local references and SVG files
+        run: python scripts/check_docs.py
