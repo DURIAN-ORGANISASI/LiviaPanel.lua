@@ -25,7 +25,7 @@ permissions:
 
 jobs:
   validate-documentation:
-    name: Validate links and SVG XML
+    name: Validate README assets and generated artwork
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
