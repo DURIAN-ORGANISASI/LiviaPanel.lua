@@ -29,7 +29,6 @@ Speed, Jump, Fly, No Clip, dan Flashlight dalam satu skrip Lua yang ringkas, dap
 
 </div>
 
-
 ---
 
 ![Ilustrasi antarmuka Livia Panel](docs/screenshots/banner.id.svg)
