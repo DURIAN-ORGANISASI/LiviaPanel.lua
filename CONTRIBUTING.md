@@ -11,7 +11,7 @@ Thank you for helping improve the project. Small, focused pull requests are easi
 
 ## Run documentation checks
 
-The repository currently has no automated Roblox runtime test harness. The available automated checks validate local documentation links and parse all documentation SVG files as XML; they do not prove that a script works in every Roblox experience.
+The repository currently has no automated Roblox runtime test harness. Automated checks validate local documentation links, parse SVG/XML, reject illustrations with missing visible text, and regenerate the Fly illustrations in a temporary directory to ensure the README's refreshed Fly assets match their source generator. They do not prove that a script works in every Roblox experience.
 
 Requirements: Python 3.9 or newer, using only the standard library.
 

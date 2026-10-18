@@ -84,7 +84,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/akndrn000/LiviaPanel.
 
 ### Menggunakan Fly
 
-![Panduan Fly](docs/screenshots/fly.id.svg)
+![Panduan Fly](docs/screenshots/fly-guide.id.svg)
 
 Joystick menentukan arah gerak. Saat bergerak maju, arah pandang kamera ikut memengaruhi gerak naik/turun. Lepaskan joystick untuk menghentikan gerak.
 
@@ -123,7 +123,7 @@ Perintah di atas menghasilkan ilustrasi Bahasa Indonesia dan Inggris di `docs/sc
 
 #### Pemeriksaan dokumentasi
 
-Jalankan `python3 scripts/check_docs.py` untuk memeriksa referensi file lokal dan memastikan seluruh SVG dapat diparse sebagai XML. Pemeriksaan ini dijalankan otomatis lewat GitHub Actions; ini bukan tes runtime di Roblox.
+Jalankan `python3 scripts/check_docs.py` untuk memeriksa tautan lokal, validitas XML, isi ilustrasi agar tidak kosong, dan kecocokan gambar Fly yang ditampilkan README dengan generator sumbernya. Pemeriksaan berjalan otomatis lewat GitHub Actions; ini bukan tes runtime di Roblox.
 
 ### Struktur repositori
 
@@ -146,7 +146,7 @@ docs/
     ├── features.id.svg / features.en.svg
     ├── workflow.id.svg / workflow.en.svg
     ├── controls.id.svg / controls.en.svg
-    ├── fly.id.svg / fly.en.svg
+    ├── fly.id.svg / fly.en.svg / fly-guide.id.svg / fly-guide.en.svg
     ├── safety.id.svg / safety.en.svg
     └── social-preview.svg
 ~~~

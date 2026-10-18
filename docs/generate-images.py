@@ -228,8 +228,18 @@ def social_preview():
 
 if __name__ == "__main__":
     (ROOT / "brand.svg").write_text(logo(), encoding="utf-8")
+    generated_count = 0
     for lang in ("id", "en"):
         for kind in ("banner", "preview", "features", "workflow", "controls", "fly", "safety"):
-            (OUT / f"{kind}.{lang}.svg").write_text(render(lang, kind), encoding="utf-8")
+            artwork = render(lang, kind)
+            if artwork.count("<text") < 8:
+                raise RuntimeError("Generated illustration " + kind + "." + lang + ".svg appears incomplete.")
+            (OUT / (kind + "." + lang + ".svg")).write_text(artwork, encoding="utf-8")
+            generated_count += 1
+            if kind == "fly":
+                # A fresh filename avoids stale README image caches after an asset fix.
+                (OUT / ("fly-guide." + lang + ".svg")).write_text(artwork, encoding="utf-8")
+                generated_count += 1
     (OUT / "social-preview.svg").write_text(social_preview(), encoding="utf-8")
-    print("Generated 15 screenshot illustrations and one brand logo.")
+    generated_count += 1
+    print("Generated " + str(generated_count) + " screenshot illustrations and one brand logo.")

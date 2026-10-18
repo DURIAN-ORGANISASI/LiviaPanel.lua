@@ -84,7 +84,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/akndrn000/LiviaPanel.
 
 ### Using Fly
 
-![Fly guide](docs/screenshots/fly.en.svg)
+![Fly guide](docs/screenshots/fly-guide.en.svg)
 
 The joystick sets movement direction. While moving forward, camera pitch also influences upward/downward movement. Release the joystick to stop moving.
 
@@ -123,7 +123,7 @@ This creates Indonesian and English illustrations in `docs/screenshots/` and the
 
 #### Documentation checks
 
-Run `python3 scripts/check_docs.py` to validate local file references and confirm every SVG parses as XML. This check runs automatically through GitHub Actions; it is not a Roblox runtime test.
+Run `python3 scripts/check_docs.py` to validate local links, XML syntax, non-empty illustrations, and exact consistency between the Fly illustrations shown in the READMEs and their source generator. This check runs automatically through GitHub Actions; it is not a Roblox runtime test.
 
 ### Repository structure
 
@@ -146,7 +146,7 @@ docs/
     ├── features.id.svg / features.en.svg
     ├── workflow.id.svg / workflow.en.svg
     ├── controls.id.svg / controls.en.svg
-    ├── fly.id.svg / fly.en.svg
+    ├── fly.id.svg / fly.en.svg / fly-guide.id.svg / fly-guide.en.svg
     ├── safety.id.svg / safety.en.svg
     └── social-preview.svg
 ~~~
