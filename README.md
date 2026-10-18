@@ -123,7 +123,7 @@ Perintah di atas menghasilkan ilustrasi Bahasa Indonesia dan Inggris di `docs/sc
 
 #### Pemeriksaan dokumentasi
 
-Jalankan `python3 scripts/check_docs.py` untuk memeriksa tautan lokal, validitas XML, isi ilustrasi agar tidak kosong, dan kecocokan setiap SVG dengan generator sumbernya. Pemeriksaan berjalan otomatis lewat GitHub Actions; ini bukan tes runtime di Roblox.
+Jalankan `python3 scripts/check_docs.py` untuk memeriksa tautan lokal, validitas XML, isi ilustrasi agar tidak kosong, dan kecocokan gambar Fly yang ditampilkan README dengan generator sumbernya. Pemeriksaan berjalan otomatis lewat GitHub Actions; ini bukan tes runtime di Roblox.
 
 ### Struktur repositori
 
