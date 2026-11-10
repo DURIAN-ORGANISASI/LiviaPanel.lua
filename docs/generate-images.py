@@ -17,7 +17,7 @@ COPY = {
         "tag": "ROBLOX LUA • MOBILE-FIRST",
         "title": ("Satu panel.", "Lima kontrol."),
         "desc": "Speed, Jump, Fly, No Clip, dan Flashlight dalam UI ringkas yang dirancang untuk sentuhan.",
-        "features": ["Kecepatan gerak", "Tinggi lompatan", "Gerak udara", "Nonaktifkan tabrakan", "Cahaya terarah"],
+        "features": ["Kecepatan gerak", "Tinggi lompatan", "Gerak udara", "Nonaktifkan tabrakan", "Pencahayaan seluruh map", "Senter yang dapat diatur"],
         "steps": [
             ("SALIN SCRIPT", "Buka file Lua dari repositori."),
             ("JALANKAN", "Gunakan lingkungan yang mengizinkan."),
@@ -41,7 +41,7 @@ COPY = {
         "tag": "ROBLOX LUA • MOBILE-FIRST",
         "title": ("One panel.", "Five controls."),
         "desc": "Speed, Jump, Fly, No Clip, and Flashlight in a compact interface designed for touch.",
-        "features": ["Movement speed", "Jump height", "Air movement", "Disable collisions", "Directional light"],
+        "features": ["Movement speed", "Jump height", "Air movement", "Disable collisions", "Full-map lighting", "Adjustable flashlight"],
         "steps": [
             ("COPY SCRIPT", "Open the Lua file from this repository."),
             ("RUN", "Use a supported, permitted environment."),
@@ -157,16 +157,26 @@ def render(lang, kind):
         return shell("Livia Panel preview", d["desc"], body, 650)
 
     if kind == "features":
-        body = text(42, 53, "CORE FEATURES" if lang == "en" else "FITUR UTAMA", 25, TEXT, 900)
-        body += text(43, 79, "Five controls in one compact panel." if lang == "en" else "Lima fungsi dalam satu panel kecil.", 13, MUTED, 500)
-        items = [("01","SPEED",d["features"][0],"50"),("02","JUMP",d["features"][1],"100"),("03","FLY",d["features"][2],"60"),("04","NO CLIP",d["features"][3],"ON/OFF"),("05","FLASHLIGHT",d["features"][4],"ON/OFF")]
+        body = text(42, 58, "CORE FEATURES" if lang == "en" else "FITUR UTAMA", 25, TEXT, 900)
+        items = [
+            ("01", "SPEED", "50", "↗"),
+            ("02", "JUMP", "100", "↑"),
+            ("03", "FLY", "60", "➤"),
+            ("04", "NO CLIP", "ON/OFF", "◇"),
+            ("05", "FULLBRIGHT", "0.5–5.0", "☼"),
+            ("06", "FLASHLIGHT", "POWER • RANGE • ANGLE", "✦"),
+        ]
         for i, item in enumerate(items):
-            x = 35 + i*234
-            body += f'<rect x="{x}" y="112" width="214" height="205" rx="17" fill="#151F33" stroke="#334662"/><rect x="{x+16}" y="128" width="42" height="42" rx="12" fill="url(#accent)"/>'
-            body += text(x+37, 155, item[0], 10, "#071321", 900, "middle") + text(x+16, 201, item[1], 15, TEXT, 900) + text(x+16, 224, item[2], 10, "#9EAFCA", 550)
-            body += f'<path d="M{x+16} 242H{x+198}" stroke="#2B3D59"/>' + text(x+16, 271, "CONTROL" if lang == "en" else "KONTROL", 8, "#7F93B3", 850) + text(x+16, 297, item[3], 16, "#A9B3FF" if item[3] != "ON/OFF" else CYAN, 900)
-        body += text(43, 350, "Defaults match the current LiviaPanel.lua configuration." if lang == "en" else "Nilai awal mengikuti konfigurasi LiviaPanel.lua saat ini.", 10, "#8094B4", 600)
-        return shell("Livia Panel features", "Overview of Speed, Jump, Fly, No Clip and Flashlight.", body, 380)
+            column = i % 3
+            row = i // 3
+            x = 35 + column * 389
+            y = 96 + row * 160
+            body += f'<rect x="{x}" y="{y}" width="354" height="140" rx="17" fill="#151F33" stroke="#334662"/><rect x="{x+18}" y="{y+30}" width="44" height="44" rx="12" fill="url(#accent)"/>'
+            body += text(x+40, y+58, item[0], 10, "#071321", 900, "middle")
+            body += text(x+80, y+54, item[1], 16, TEXT, 900)
+            body += text(x+80, y+100, item[2], 10, "#A9B3FF" if item[2] != "ON/OFF" else CYAN, 800)
+            body += f'<path d="M{x+18} {y+117}H{x+336}" stroke="#2B3D59"/>'
+        return shell("Livia Panel features", "Speed, Jump, Fly, No Clip, Fullbright and adjustable Flashlight.", body, 430)
 
     if kind == "workflow":
         body = text(44, 52, "GET STARTED IN FOUR STEPS" if lang == "en" else "MULAI DALAM EMPAT LANGKAH", 24, TEXT, 900)

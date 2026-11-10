@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate repository links, SVG structure, and generated-artwork consistency."""
+"""Validate repository links, SVG structure, generated artwork, and Livia features."""
 from __future__ import annotations
 
 import re
@@ -87,6 +87,8 @@ def check_generated_artwork() -> tuple[int, list[str]]:
         return 0, ["docs/generate-images.py: generator is missing"]
 
     targets = [
+        Path("screenshots/features.id.svg"),
+        Path("screenshots/features.en.svg"),
         Path("screenshots/fly.id.svg"),
         Path("screenshots/fly.en.svg"),
         Path("screenshots/fly-guide.id.svg"),
@@ -132,11 +134,32 @@ def check_generated_artwork() -> tuple[int, list[str]]:
                 )
     return compared, errors
 
+def check_livia_features() -> list[str]:
+    source = (ROOT / "LiviaPanel.lua").read_text(encoding="utf-8")
+    required = (
+        "local function setFullbright(state)",
+        "Lighting.Ambient = Color3.new",
+        "Lighting.GlobalShadows = false",
+        'createSliderRow("FULLBRIGHT"',
+        "FlashlightBrightness",
+        "FlashlightRange",
+        "FlashlightAngle",
+        'createSliderRow("FLASHLIGHT POWER"',
+        'createSliderRow("FLASHLIGHT RANGE"',
+        'createSliderRow("FLASHLIGHT ANGLE"',
+    )
+    errors = [f"LiviaPanel.lua: missing feature implementation: {token}" for token in required if token not in source]
+    if "local descriptions =" in source or 'local sub = Instance.new("TextLabel", row)' in source:
+        errors.append("LiviaPanel.lua: remove the small description text below feature names")
+    return errors
+
+
 def main() -> int:
     link_count, link_errors = check_local_references()
     svg_count, svg_errors = check_svg_files()
     artwork_count, artwork_errors = check_generated_artwork()
-    errors = link_errors + svg_errors + artwork_errors
+    feature_errors = check_livia_features()
+    errors = link_errors + svg_errors + artwork_errors + feature_errors
 
     print(f"Checked {link_count} local Markdown/HTML references.")
     print(f"Parsed {svg_count} SVG files for XML validity and non-empty illustration content.")
@@ -146,7 +169,7 @@ def main() -> int:
         for error in errors:
             print(f"- {error}", file=sys.stderr)
         return 1
-    print("Documentation checks passed.")
+    print("Documentation and Livia feature checks passed.")
     return 0
 
 

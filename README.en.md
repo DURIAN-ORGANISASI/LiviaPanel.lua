@@ -13,8 +13,8 @@
 
 <p><a href="README.md">Bahasa Indonesia</a> · <a href="README.en.md">English</a></p>
 
-<p><strong>One panel. Five controls. Designed for touch.</strong><br>
-Speed, Jump, Fly, No Clip, and Flashlight in one compact Lua script with a draggable, minimizable interface.</p>
+<p><strong>One panel. Six features. Designed for touch.</strong><br>
+Speed, Jump, Fly, No Clip, Fullbright, and an adjustable Flashlight in one touch-first Lua interface.</p>
 
 <p>
   <a href="#quick-start">Quick start</a> ·
@@ -45,7 +45,7 @@ No external UI library is required. The main file is [`LiviaPanel.lua`](LiviaPan
 
 1. Open [`LiviaPanel.lua`](LiviaPanel.lua).
 2. Copy the script and run it only in an experience you own or an environment that explicitly permits client-side Lua scripts.
-3. Tap **OFF** to enable a feature. For Speed, Jump, and Fly, adjust the numeric value.
+3. Tap **OFF** to enable a feature. Use the Fullbright slider to light the map, then adjust Flashlight power, range, and angle.
 4. Drag the panel from its header. Use the minus button to minimize it or **X** to close and clean up the features.
 
 Optional: load from the raw URL only in an environment that explicitly permits `loadstring` and `HttpGet`. Review the script before running it; do not use an executor to bypass Roblox experience rules or security:
@@ -64,7 +64,8 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/akndrn000/LiviaPanel.
 | **Jump** | 100 | Sets `Humanoid.JumpPower` while enabled. |
 | **Fly** | 60 | Air movement guided by joystick input and camera orientation. |
 | **No Clip** | OFF | Changes `CanCollide` on local character parts and records original values for cleanup. |
-| **Flashlight** | OFF | Adds a local `SpotLight` to the head or `HumanoidRootPart`, when available. |
+| **Fullbright** | 3.0 (OFF) | Lights indoor and outdoor areas through `Lighting`; intensity is adjustable from 0.5–5.0. |
+| **Flashlight** | 3 / 48 / 75° (OFF) | Local `SpotLight` with sliders for power (0.2–10), range (8–120), and angle (30–120°). |
 | **Panel** | — | Draggable UI with minimize-to-**L** and close controls. |
 
 ## Usage guide
@@ -96,7 +97,8 @@ The joystick sets movement direction. While moving forward, camera pitch also in
 | Jump | `JumpPower` is reset to 50. |
 | Fly | Script-created flight forces are removed. |
 | No Clip | Recorded `CanCollide` values are restored for character parts that still exist. |
-| Flashlight | The script-created `SpotLight` is removed. |
+| Fullbright | Lighting properties captured before activation are restored. |
+| Flashlight | The script-created `SpotLight` is removed; slider values remain while the panel is open. |
 
 > Speed and Jump use fixed reset values of 16 and 50. Experiences with custom movement systems may have different defaults. Server-authoritative physics can also correct movement changes.
 
@@ -106,7 +108,8 @@ The joystick sets movement direction. While moving forward, camera pitch also in
 
 - **Client-side behavior:** local changes are not always replicated to the server. Games may ignore or correct movement changes.
 - **No Clip:** only changes the `CanCollide` property of character parts processed by the script. It does not guarantee bypassing server-controlled collision systems.
-- **Flashlight:** the light is created locally; appearance and range depend on the experience's lighting.
+- **Fullbright:** changes the local `Lighting` service. An experience that continuously resets lighting may override the effect.
+- **Flashlight:** the local light has adjustable power, range, and beam angle. Its appearance still depends on the experience's lighting.
 - **Compatibility:** Roblox or individual experiences may change, which can cause the script to stop working as expected.
 - **Roblox rules:** use this to develop or test your own experiences or an environment that explicitly authorizes this use. Do not use movement/collision features for an unfair advantage in other creators' experiences. Roblox states that cheating/exploiting violates its Terms of Use and can lead to account deletion ([official guidance](https://en.help.roblox.com/hc/en-us/articles/203312450-Cheating-and-Exploiting)).
 - The script does not require passwords, cookies, or account credentials.

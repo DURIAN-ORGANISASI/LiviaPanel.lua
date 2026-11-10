@@ -11,7 +11,7 @@ Thank you for helping improve the project. Small, focused pull requests are easi
 
 ## Run documentation checks
 
-The repository currently has no automated Roblox runtime test harness. Automated checks validate local documentation links, parse SVG/XML, reject illustrations with missing visible text, and regenerate the Fly illustrations in a temporary directory to ensure the README's refreshed Fly assets match their source generator. They do not prove that a script works in every Roblox experience.
+The repository currently has no automated Roblox runtime test harness. Automated checks validate local documentation links, parse SVG/XML, reject illustrations with missing visible text, regenerate the Features and Fly illustrations in a temporary directory, and check that the Fullbright/Flashlight controls exist in the single-file script. They do not prove that a script works in every Roblox experience.
 
 Requirements: Python 3.9 or newer, using only the standard library.
 
@@ -34,7 +34,8 @@ Review generated changes before committing them. Do not commit unrelated changes
 - [ ] The change has a clear purpose and summary.
 - [ ] Documentation in both languages is updated where needed.
 - [ ] `python3 scripts/check_docs.py` passes.
-- [ ] Generated artwork is reproducible from its generator.
+- [ ] Features and Fly artwork is reproducible from its generator.
+- [ ] Fullbright and adjustable Flashlight controls are present; feature subtitles are removed.
 - [ ] No credentials or personal information are included.
 - [ ] Any new third-party source, asset, or dependency is documented in [`docs/SOURCES.md`](docs/SOURCES.md) with its license or attribution requirements.
 

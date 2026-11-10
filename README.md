@@ -13,8 +13,8 @@
 
 <p><a href="README.md">Bahasa Indonesia</a> · <a href="README.en.md">English</a></p>
 
-<p><strong>Satu panel. Lima kontrol. Dibuat untuk layar sentuh.</strong><br>
-Speed, Jump, Fly, No Clip, dan Flashlight dalam satu skrip Lua yang ringkas, dapat digeser, dan dapat diminimalkan.</p>
+<p><strong>Satu panel. Enam fitur. Dibuat untuk layar sentuh.</strong><br>
+Speed, Jump, Fly, No Clip, Fullbright, dan Flashlight dengan kontrol cahaya yang bisa diatur.</p>
 
 <p>
   <a href="#mulai-cepat">Mulai cepat</a> ·
@@ -45,7 +45,7 @@ Tidak membutuhkan library UI eksternal. File utama ada di [`LiviaPanel.lua`](Liv
 
 1. Buka [`LiviaPanel.lua`](LiviaPanel.lua).
 2. Salin skrip dan jalankan hanya pada pengalaman milikmu atau lingkungan yang secara eksplisit mengizinkan skrip Lua sisi klien.
-3. Ketuk tombol **OFF** untuk mengaktifkan fitur. Untuk Speed, Jump, dan Fly, sesuaikan nilai angkanya.
+3. Ketuk **OFF** untuk mengaktifkan fitur. Geser slider Fullbright untuk menerangi map, lalu atur power, jangkauan, dan sudut Flashlight.
 4. Geser panel melalui area header. Gunakan tombol minus untuk minimize atau **X** untuk menutup dan membersihkan fitur.
 
 Opsional: pemuatan dari URL mentah hanya untuk lingkungan yang memang mengizinkan `loadstring` dan `HttpGet`. Periksa skrip sebelum menjalankannya; jangan gunakan executor untuk melewati aturan atau keamanan pengalaman Roblox:
@@ -64,7 +64,8 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/akndrn000/LiviaPanel.
 | **Jump** | 100 | Mengatur `Humanoid.JumpPower` saat aktif. |
 | **Fly** | 60 | Gerak udara dengan arah joystick dan orientasi kamera. |
 | **No Clip** | OFF | Mengubah `CanCollide` pada bagian karakter lokal dan mencatat nilai awal untuk pemulihan. |
-| **Flashlight** | OFF | Menambahkan `SpotLight` lokal pada kepala atau `HumanoidRootPart` jika tersedia. |
+| **Fullbright** | 3.0 (OFF) | Menerangi area dalam dan luar map melalui `Lighting`; intensitas 0.5–5.0 dapat diatur dengan slider. |
+| **Flashlight** | 3 / 48 / 75° (OFF) | `SpotLight` lokal dengan slider power (0.2–10), jangkauan (8–120), dan sudut (30–120°). |
 | **Panel** | — | Panel bisa digeser, diminimalkan menjadi tombol **L**, dan ditutup. |
 
 ## Panduan penggunaan
@@ -96,7 +97,8 @@ Joystick menentukan arah gerak. Saat bergerak maju, arah pandang kamera ikut mem
 | Jump | `JumpPower` diatur kembali ke 50. |
 | Fly | Gaya gerak terbang yang dibuat skrip dihapus. |
 | No Clip | Nilai `CanCollide` yang tercatat dipulihkan untuk bagian karakter yang masih ada. |
-| Flashlight | `SpotLight` yang dibuat skrip dihapus. |
+| Fullbright | Nilai Lighting sebelum fitur diaktifkan dipulihkan. |
+| Flashlight | `SpotLight` yang dibuat skrip dihapus; nilai slider tetap tersimpan selama panel terbuka. |
 
 > Speed dan Jump memakai nilai pemulihan tetap, yaitu 16 dan 50. Pengalaman dengan sistem gerak khusus mungkin memiliki nilai default berbeda. Perubahan fisika juga dapat dikoreksi oleh server.
 
@@ -106,7 +108,8 @@ Joystick menentukan arah gerak. Saat bergerak maju, arah pandang kamera ikut mem
 
 - **Perilaku sisi klien:** perubahan lokal tidak selalu direplikasi ke server. Game dapat mengabaikan atau mengoreksi perubahan gerakan.
 - **No Clip:** hanya mengubah properti `CanCollide` pada karakter yang diproses skrip. Ini tidak menjamin dapat melewati sistem tabrakan yang dikendalikan server.
-- **Flashlight:** cahaya dibuat secara lokal; tampilan dan jangkauan bergantung pada pencahayaan pengalaman.
+- **Fullbright:** mengubah layanan `Lighting` pada tampilan lokal. Game yang mengatur ulang pencahayaan terus-menerus dapat menimpa efeknya.
+- **Flashlight:** cahaya dibuat secara lokal; power, jangkauan, dan sudut sorot dapat disesuaikan. Efek tetap bergantung pada pencahayaan pengalaman.
 - **Kompatibilitas:** Roblox atau game dapat berubah sehingga skrip tidak lagi berfungsi seperti sebelumnya.
 - **Aturan Roblox:** gunakan untuk mengembangkan atau menguji pengalaman milikmu sendiri atau lingkungan yang secara eksplisit mengizinkan penggunaan ini. Jangan memakai fitur gerak/tabrakan untuk mendapat keuntungan tidak adil di pengalaman orang lain. Roblox menyatakan cheating/exploiting melanggar Ketentuan Penggunaan dan dapat menyebabkan akun dihapus ([panduan resmi](https://en.help.roblox.com/hc/id/articles/203312450-Kecurangan-dan-Eksploitasi)).
 - Skrip ini tidak membutuhkan kata sandi, cookie, atau kredensial akun.

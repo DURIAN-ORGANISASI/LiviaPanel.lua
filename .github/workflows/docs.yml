@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "README*.md"
+      - "LiviaPanel.lua"
       - "CONTRIBUTING.md"
       - "SECURITY.md"
       - "docs/**"

@@ -8,6 +8,8 @@ This page records the official references used when documenting Livia Panel. The
 - [Roblox Creator Hub — Luau](https://create.roblox.com/docs/id-id/luau): the language used by Roblox scripts.
 - [Roblox Creator Hub — Data model](https://create.roblox.com/docs/projects/data-model): high-level context for Roblox instances and script placement.
 - [Roblox Engine API reference](https://create.roblox.com/docs/reference/engine): reference for engine objects and APIs such as `Humanoid`, `BasePart`, `RunService`, `UserInputService`, and `SpotLight`.
+- [Lighting API](https://create.roblox.com/docs/reference/engine/classes/Lighting): documents Ambient, Brightness, GlobalShadows, ExposureCompensation, and fog properties used by Fullbright.
+- [SpotLight API](https://create.roblox.com/docs/reference/engine/classes/SpotLight): documents the adjustable power, range, and angle properties used by Flashlight.
 - [Roblox Support — Kecurangan dan Eksploitasi](https://en.help.roblox.com/hc/id/articles/203312450-Kecurangan-dan-Eksploitasi) / [English version](https://en.help.roblox.com/hc/en-us/articles/203312450-Cheating-and-Exploiting): official policy guidance relevant to responsible use.
 - [GitHub Docs — Licensing a repository](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository): reference for presenting an open-source license on GitHub.
 
