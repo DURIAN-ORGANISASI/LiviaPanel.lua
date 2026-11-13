@@ -1,5 +1,5 @@
 --[[
-    Livia Panel v2.2
+    Livia Panel v2.5
     Speed | Jump | Fly | Fullbright | Flashlight | No Clip
     Touch-first utility panel.
 ]]
@@ -422,7 +422,7 @@ sg.ResetOnSpawn = false
 local Main = Instance.new("Frame", sg)
 local initialViewport = workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize or Vector2.new(800, 600)
 local panelWidth = math.clamp(initialViewport.X - 24, 260, 340)
-local panelHeight = math.clamp(initialViewport.Y - 40, 340, 440)
+local panelHeight = math.clamp(initialViewport.Y - 32, 300, 440)
 Main.Size = UDim2.fromOffset(panelWidth, panelHeight)
 Main.Position = UDim2.new(0.5, -panelWidth / 2, 0.5, -panelHeight / 2)
 Main.BackgroundColor3 = T.BG
@@ -476,7 +476,7 @@ LogoText.TextSize = 21
 LogoText.TextColor3 = T.Text
 
 local Title = Instance.new("TextLabel", Header)
-Title.Size = UDim2.new(0, 150, 0, 22)
+Title.Size = UDim2.new(1, -126, 0, 22)
 Title.Position = UDim2.new(0, 44, 0, 2)
 Title.BackgroundTransparency = 1
 Title.Text = "LIVIA PANEL"
@@ -486,10 +486,10 @@ Title.TextColor3 = T.Text
 Title.TextXAlignment = Enum.TextXAlignment.Left
 
 local Subtitle = Instance.new("TextLabel", Header)
-Subtitle.Size = UDim2.new(0, 150, 0, 14)
+Subtitle.Size = UDim2.new(1, -126, 0, 14)
 Subtitle.Position = UDim2.new(0, 45, 0, 24)
 Subtitle.BackgroundTransparency = 1
-Subtitle.Text = "MOBILE UTILITY  •  V2.4"
+Subtitle.Text = "MOBILE UTILITY  •  V2.5"
 Subtitle.Font = Enum.Font.GothamMedium
 Subtitle.TextSize = 9
 Subtitle.TextColor3 = T.Muted
@@ -635,8 +635,8 @@ createRow("JUMP POWER", "Jump", true)
 createRow("FLY SPEED", "Fly", true)
 
 createSection("LIGHTING")
-createRow("FULLBRIGHT (1-10)", "Fullbright", true)
-createRow("FLASHLIGHT POWER", "Flashlight", true)
+createRow("FULLBRIGHT", "Fullbright", true)
+createRow("FLASHLIGHT", "Flashlight", true)
 
 createSection("UTILITY")
 createRow("NO CLIP", "NoClip", false)
