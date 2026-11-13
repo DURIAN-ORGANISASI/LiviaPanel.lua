@@ -515,14 +515,19 @@ local function createRow(label, key, hasValue)
         corner(box, 8)
         box.FocusLost:Connect(function()
             local n = tonumber(box.Text)
+            local isDistance = key == "PlayerESP" or key == "MonsterESP"
             local limited = key == "Fullbright"
-            local minValue = limited and 1 or 0
-            local maxValue = limited and 10 or math.huge
+            local minValue = (limited or isDistance) and 1 or 0
+            local maxValue = isDistance and 500 or (limited and 10 or math.huge)
             if n and n >= minValue and n <= maxValue then
-                V[key] = n
+                V[key == "PlayerESP" and "PlayerESPDistance" or key == "MonsterESP" and "MonsterESPDistance" or key] = isDistance and math.floor(n) or n
                 if key == "Fullbright" and S.Fullbright then setFullbright(true) end
+                if isDistance then
+                    box.Text = tostring(V[key == "PlayerESP" and "PlayerESPDistance" or "MonsterESPDistance"])
+                    refreshESP()
+                end
             else
-                box.Text = tostring(V[key])
+                box.Text = tostring(isDistance and V[key == "PlayerESP" and "PlayerESPDistance" or "MonsterESPDistance"] or V[key])
             end
         end)
     end
@@ -584,44 +589,6 @@ local function createValueRow(label, key)
 end
 
 
-local function createDistanceRow(label, key)
-    local row = Instance.new("Frame", Body)
-    row.Size = UDim2.new(1, 0, 0, 38)
-    row.BackgroundColor3 = T.Card
-    corner(row, 10)
-    stroke(row)
-
-    local lb = Instance.new("TextLabel", row)
-    lb.Size = UDim2.new(1, -66, 1, 0)
-    lb.Position = UDim2.new(0, 12, 0, 0)
-    lb.BackgroundTransparency = 1
-    lb.Text = label
-    lb.Font = Enum.Font.GothamBold
-    lb.TextSize = 10
-    lb.TextColor3 = T.Text
-    lb.TextXAlignment = Enum.TextXAlignment.Left
-
-    local box = Instance.new("TextBox", row)
-    box.Size = UDim2.new(0, 42, 0, 24)
-    box.Position = UDim2.new(1, -54, 0.5, -12)
-    box.BackgroundColor3 = T.Input
-    box.Text = tostring(V[key])
-    box.Font = Enum.Font.GothamBold
-    box.TextSize = 12
-    box.TextColor3 = T.Text
-    box.ClearTextOnFocus = false
-    corner(box, 8)
-    box.FocusLost:Connect(function()
-        local n = tonumber(box.Text)
-        if n and n >= 1 and n <= 500 then
-            V[key] = math.floor(n)
-            box.Text = tostring(V[key])
-            refreshESP()
-        else
-            box.Text = tostring(V[key])
-        end
-    end)
-end
 
 createRow("SPEED", "Speed", true)
 createRow("JUMP", "Jump", true)
@@ -629,10 +596,8 @@ createRow("FLY", "Fly", true)
 createRow("FULLBRIGHT (1-10)", "Fullbright", true)
 createRow("FLASHLIGHT", "Flashlight", false)
 createValueRow("FLASHLIGHT POWER (1-10)", "FlashlightBrightness")
-createRow("ESP PLAYER", "PlayerESP", false)
-createDistanceRow("PLAYER DISTANCE (1-500)", "PlayerESPDistance")
-createRow("ESP MONSTER", "MonsterESP", false)
-createDistanceRow("MONSTER DISTANCE (1-500)", "MonsterESPDistance")
+createRow("ESP PLAYER", "PlayerESP", true)
+createRow("ESP MONSTER", "MonsterESP", true)
 createRow("NO CLIP", "NoClip", false)
 
 -- ==========================================
