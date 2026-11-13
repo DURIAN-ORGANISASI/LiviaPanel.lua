@@ -21,13 +21,14 @@ if CoreGui:FindFirstChild("LiviaPanel") then CoreGui.LiviaPanel:Destroy() end
 local S = {
     Speed = false, Jump = false, Fly = false,
     Fullbright = false, Flashlight = false,
-    ESP = false, NoClip = false,
+    PlayerESP = false, MonsterESP = false, NoClip = false,
 }
 local V = {
     Speed = 50, Jump = 100, Fly = 60,
     Fullbright = 5,
     FlashlightBrightness = 5,
-    ESPDistance = 500,
+    PlayerESPDistance = 500,
+    MonsterESPDistance = 500,
 }
 
 local T = {
@@ -71,7 +72,7 @@ local function clearESP(model)
 end
 
 local function refreshESP()
-    local active = S.ESP
+    local active = S.PlayerESP or S.MonsterESP
     if not active then
         for model in pairs(espObjects) do clearESP(model) end
         return
@@ -92,7 +93,9 @@ local function refreshESP()
             if humanoid and humanoid.Health > 0 and root and model ~= LP.Character then
                 local isPlayer = playerCharacters[model] == true
                 local distance = (root.Position - localRoot.Position).Magnitude
-                local shouldShow = S.ESP and distance <= V.ESPDistance
+                local maxDistance = isPlayer and V.PlayerESPDistance or V.MonsterESPDistance
+                local shouldShow = ((isPlayer and S.PlayerESP) or (not isPlayer and S.MonsterESP))
+                    and distance <= maxDistance
                 if shouldShow then
                     found[model] = true
                     local color = isPlayer and Color3.fromRGB(65, 190, 255) or Color3.fromRGB(255, 75, 90)
@@ -236,7 +239,7 @@ local function applyChange(key, state)
     if key == "NoClip" and not state then restoreNoClip() end
     if key == "Fullbright" then setFullbright(state) end
     if key == "Flashlight" then setFlashlight(state) end
-    if key == "ESP" then refreshESP() end
+    if key == "PlayerESP" or key == "MonsterESP" then refreshESP() end
 end
 
 conns[#conns + 1] = RunService.Heartbeat:Connect(function(dt)
@@ -504,7 +507,7 @@ local function createRow(label, key, hasValue)
         box.Size = UDim2.new(0, 42, 0, 24)
         box.Position = UDim2.new(1, -104, 0.5, -12)
         box.BackgroundColor3 = T.Input
-        local valueKey = key == "ESP" and "ESPDistance" or key
+        local valueKey = key == "PlayerESP" and "PlayerESPDistance" or key == "MonsterESP" and "MonsterESPDistance" or key
         box.Text = tostring(V[valueKey])
         box.Font = Enum.Font.GothamBold
         box.TextSize = 12
@@ -513,19 +516,19 @@ local function createRow(label, key, hasValue)
         corner(box, 8)
         box.FocusLost:Connect(function()
             local n = tonumber(box.Text)
-            local isDistance = key == "ESP"
+            local isDistance = key == "PlayerESP" or key == "MonsterESP"
             local limited = key == "Fullbright"
             local minValue = (limited or isDistance) and 1 or 0
             local maxValue = isDistance and 500 or (limited and 10 or math.huge)
             if n and n >= minValue and n <= maxValue then
-                V[isDistance and "ESPDistance" or key] = isDistance and math.floor(n) or n
+                V[key == "PlayerESP" and "PlayerESPDistance" or key == "MonsterESP" and "MonsterESPDistance" or key] = isDistance and math.floor(n) or n
                 if key == "Fullbright" and S.Fullbright then setFullbright(true) end
                 if isDistance then
-                    box.Text = tostring(V.ESPDistance)
+                    box.Text = tostring(V[key == "PlayerESP" and "PlayerESPDistance" or "MonsterESPDistance"])
                     refreshESP()
                 end
             else
-                box.Text = tostring(isDistance and V.ESPDistance or V[key])
+                box.Text = tostring(isDistance and V[key == "PlayerESP" and "PlayerESPDistance" or "MonsterESPDistance"] or V[key])
             end
         end)
     end
@@ -594,7 +597,8 @@ createRow("FLY", "Fly", true)
 createRow("FULLBRIGHT (1-10)", "Fullbright", true)
 createRow("FLASHLIGHT", "Flashlight", false)
 createValueRow("FLASHLIGHT POWER (1-10)", "FlashlightBrightness")
-createRow("ESP PLAYER + MONSTER", "ESP", true)
+createRow("ESP PLAYER", "PlayerESP", true)
+createRow("ESP MONSTER", "MonsterESP", true)
 createRow("NO CLIP", "NoClip", false)
 
 -- ==========================================
