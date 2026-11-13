@@ -1,7 +1,7 @@
 --[[
-    Livia Panel v2.1
-    Speed | Jump | Fly | No Clip | Fullbright | Flashlight
-    Adjustable global lighting and flashlight controls; touch-first UI.
+    Livia Panel v2.2
+    Speed | Jump | Fly | Fullbright | Flashlight | ESP Player | ESP Monster | No Clip
+    Universal humanoid-based local ESP; touch-first UI.
 ]]
 
 local Players = game:GetService("Players")
@@ -19,8 +19,9 @@ if CoreGui:FindFirstChild("LiviaPanel") then CoreGui.LiviaPanel:Destroy() end
 -- STATE
 -- ==========================================
 local S = {
-    Speed = false, Jump = false, Fly = false, NoClip = false,
+    Speed = false, Jump = false, Fly = false,
     Fullbright = false, Flashlight = false,
+    PlayerESP = false, MonsterESP = false, NoClip = false,
 }
 local V = {
     Speed = 50, Jump = 100, Fly = 60,
@@ -53,6 +54,87 @@ local bv, bg
 local noclipCache = setmetatable({}, {__mode = "k"})
 local flashlight
 local fullbrightOriginal
+local espObjects = {}
+local espScanElapsed = 0
+local espFolder = Instance.new("Folder")
+espFolder.Name = "LiviaESP"
+espFolder.Parent = CoreGui
+
+
+local function clearESP(model)
+    local entry = espObjects[model]
+    if not entry then return end
+    if entry.highlight then entry.highlight:Destroy() end
+    if entry.billboard then entry.billboard:Destroy() end
+    espObjects[model] = nil
+end
+
+local function refreshESP()
+    local active = S.PlayerESP or S.MonsterESP
+    if not active then
+        for model in pairs(espObjects) do clearESP(model) end
+        return
+    end
+
+    local found = {}
+    local playerCharacters = {}
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player.Character then playerCharacters[player.Character] = true end
+    end
+
+    for _, model in ipairs(workspace:GetDescendants()) do
+        if model:IsA("Model") then
+            local humanoid = model:FindFirstChildOfClass("Humanoid")
+            local root = model:FindFirstChild("HumanoidRootPart") or model:FindFirstChild("Head") or model.PrimaryPart
+            if humanoid and humanoid.Health > 0 and root and model ~= LP.Character then
+                local isPlayer = playerCharacters[model] == true
+                local shouldShow = (isPlayer and S.PlayerESP) or (not isPlayer and S.MonsterESP)
+                if shouldShow then
+                    found[model] = true
+                    local color = isPlayer and Color3.fromRGB(65, 190, 255) or Color3.fromRGB(255, 75, 90)
+                    local label = isPlayer and model.Name or (model.Name ~= "" and model.Name or "MONSTER")
+                    local entry = espObjects[model]
+                    if not entry then
+                        local highlight = Instance.new("Highlight")
+                        highlight.Name = "LiviaESPHighlight"
+                        highlight.Adornee = model
+                        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                        highlight.FillTransparency = 0.78
+                        highlight.OutlineTransparency = 0
+                        highlight.Parent = espFolder
+
+                        local billboard = Instance.new("BillboardGui")
+                        billboard.Name = "LiviaESPLabel"
+                        billboard.Adornee = root
+                        billboard.Size = UDim2.fromOffset(150, 28)
+                        billboard.StudsOffset = Vector3.new(0, 3, 0)
+                        billboard.AlwaysOnTop = true
+                        billboard.Parent = espFolder
+
+                        local text = Instance.new("TextLabel")
+                        text.Size = UDim2.fromScale(1, 1)
+                        text.BackgroundTransparency = 1
+                        text.Font = Enum.Font.GothamBold
+                        text.TextSize = 12
+                        text.TextStrokeTransparency = 0.25
+                        text.Parent = billboard
+                        entry = {highlight = highlight, billboard = billboard, text = text}
+                        espObjects[model] = entry
+                    end
+                    entry.highlight.FillColor = color
+                    entry.highlight.OutlineColor = color
+                    entry.billboard.Adornee = root
+                    entry.text.Text = label
+                    entry.text.TextColor3 = color
+                end
+            end
+        end
+    end
+
+    for model in pairs(espObjects) do
+        if not found[model] or not model.Parent then clearESP(model) end
+    end
+end
 
 local function getChar()
     local char = LP.Character
@@ -150,9 +232,16 @@ local function applyChange(key, state)
     if key == "NoClip" and not state then restoreNoClip() end
     if key == "Fullbright" then setFullbright(state) end
     if key == "Flashlight" then setFlashlight(state) end
+    if key == "PlayerESP" or key == "MonsterESP" then refreshESP() end
 end
 
-conns[#conns + 1] = RunService.Heartbeat:Connect(function()
+conns[#conns + 1] = RunService.Heartbeat:Connect(function(dt)
+    espScanElapsed = espScanElapsed + dt
+    if espScanElapsed >= 0.75 then
+        espScanElapsed = 0
+        refreshESP()
+    end
+
     local _, hum, hrp = getChar()
     if not hum or not hrp then return end
 
@@ -490,10 +579,12 @@ end
 createRow("SPEED", "Speed", true)
 createRow("JUMP", "Jump", true)
 createRow("FLY", "Fly", true)
-createRow("NO CLIP", "NoClip", false)
 createRow("FULLBRIGHT (1-10)", "Fullbright", true)
 createRow("FLASHLIGHT", "Flashlight", false)
 createValueRow("FLASHLIGHT POWER (1-10)", "FlashlightBrightness")
+createRow("ESP PLAYER", "PlayerESP", false)
+createRow("ESP MONSTER", "MonsterESP", false)
+createRow("NO CLIP", "NoClip", false)
 
 -- ==========================================
 -- CLEANUP
@@ -502,6 +593,8 @@ cleanup = function()
     for k in pairs(S) do
         if S[k] then S[k] = false applyChange(k, false) end
     end
+    for model in pairs(espObjects) do clearESP(model) end
+    if espFolder then espFolder:Destroy() end
     for _, c in ipairs(conns) do c:Disconnect() end
     conns = {}
     if sg then sg:Destroy() end
