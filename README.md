@@ -5,10 +5,10 @@
 # Livia Panel
 
 <p>
-  <a href="https://github.com/akndrn000/LiviaPanel.lua/actions/workflows/docs.yml"><img alt="Documentation checks" src="https://img.shields.io/github/actions/workflow/status/akndrn000/LiviaPanel.lua/docs.yml?branch=main&label=docs%20check&logo=githubactions&logoColor=white"></a>
+  <a href="https://github.com/DURIAN-ORGANISASI/LiviaPanel.lua/actions/workflows/docs.yml"><img alt="Documentation checks" src="https://img.shields.io/github/actions/workflow/status/DURIAN-ORGANISASI/LiviaPanel.lua/docs.yml?branch=main&label=docs%20check&logo=githubactions&logoColor=white"></a>
   <img src="https://img.shields.io/badge/Luau-Roblox%20scripting-2C2D72?style=flat&logo=lua&logoColor=white" alt="Luau">
   <img src="https://img.shields.io/badge/Single--file-Script-35C9DD?style=flat" alt="Single-file script">
-  <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/github/license/akndrn000/LiviaPanel.lua?label=license"></a>
+  <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/github/license/DURIAN-ORGANISASI/LiviaPanel.lua?label=license"></a>
 </p>
 
 <p><a href="README.md">Bahasa Indonesia</a> · <a href="README.en.md">English</a></p>
@@ -51,7 +51,7 @@ Tidak membutuhkan library UI eksternal. File utama ada di [`LiviaPanel.lua`](Liv
 Opsional: pemuatan dari URL mentah hanya untuk lingkungan yang memang mengizinkan `loadstring` dan `HttpGet`. Periksa skrip sebelum menjalankannya; jangan gunakan executor untuk melewati aturan atau keamanan pengalaman Roblox:
 
 ~~~lua
-loadstring(game:HttpGet("https://raw.githubusercontent.com/akndrn000/LiviaPanel.lua/main/LiviaPanel.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/DURIAN-ORGANISASI/LiviaPanel.lua/main/LiviaPanel.lua"))()
 ~~~
 
 ## Fitur
