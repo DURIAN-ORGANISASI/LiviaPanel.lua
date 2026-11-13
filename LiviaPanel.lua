@@ -507,7 +507,8 @@ local function createRow(label, key, hasValue)
         box.Size = UDim2.new(0, 42, 0, 24)
         box.Position = UDim2.new(1, -104, 0.5, -12)
         box.BackgroundColor3 = T.Input
-        box.Text = tostring(V[key])
+        local valueKey = key == "PlayerESP" and "PlayerESPDistance" or key == "MonsterESP" and "MonsterESPDistance" or key
+        box.Text = tostring(V[valueKey])
         box.Font = Enum.Font.GothamBold
         box.TextSize = 12
         box.TextColor3 = T.Text
