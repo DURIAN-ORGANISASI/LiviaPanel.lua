@@ -24,10 +24,8 @@ local S = {
 }
 local V = {
     Speed = 50, Jump = 100, Fly = 60,
-    Fullbright = 3,
-    FlashlightBrightness = 3,
-    FlashlightRange = 48,
-    FlashlightAngle = 75,
+    Fullbright = 5,
+    FlashlightBrightness = 5,
 }
 
 local T = {
@@ -101,8 +99,8 @@ local function setFlashlight(state)
     end
 
     flashlight.Brightness = V.FlashlightBrightness
-    flashlight.Range = V.FlashlightRange
-    flashlight.Angle = V.FlashlightAngle
+    flashlight.Range = 48
+    flashlight.Angle = 75
 end
 
 local function setFullbright(state)
@@ -128,13 +126,14 @@ local function setFullbright(state)
         }
     end
 
-    local intensity = math.clamp(V.Fullbright, 0.5, 5)
-    local ambient = math.clamp(0.25 + intensity / 6, 0.35, 1)
+    local level = math.clamp(V.Fullbright, 1, 10)
+    local intensity = 1 + (level - 1) * 0.8
+    local ambient = math.clamp(0.25 + level / 13, 0.35, 1)
     Lighting.Brightness = intensity
     Lighting.Ambient = Color3.new(ambient, ambient, ambient)
     Lighting.OutdoorAmbient = Color3.new(ambient, ambient, ambient)
     Lighting.GlobalShadows = false
-    Lighting.ExposureCompensation = math.clamp((intensity - 2) * 0.3, 0, 0.9)
+    Lighting.ExposureCompensation = math.clamp((level - 3) * 0.12, 0, 1)
     Lighting.FogStart = 0
     Lighting.FogEnd = 100000
 end
@@ -266,15 +265,15 @@ sg.Name = "LiviaPanel"
 sg.ResetOnSpawn = false
 
 local Main = Instance.new("Frame", sg)
-Main.Size = UDim2.new(0, 320, 0, 410)
-Main.Position = UDim2.new(0.5, -160, 0.5, -205)
+Main.Size = UDim2.new(0, 280, 0, 340)
+Main.Position = UDim2.new(0.5, -140, 0.5, -170)
 Main.BackgroundColor3 = T.BG
 Main.BorderSizePixel = 0
 corner(Main, 14)
 stroke(Main)
 
 local Header = Instance.new("Frame", Main)
-Header.Size = UDim2.new(1, 0, 0, 54)
+Header.Size = UDim2.new(1, 0, 0, 46)
 Header.BackgroundColor3 = T.Panel
 Header.BorderSizePixel = 0
 corner(Header, 14)
@@ -300,8 +299,8 @@ line.BackgroundColor3 = T.Accent
 line.BorderSizePixel = 0
 
 local Logo = Instance.new("Frame", Header)
-Logo.Size = UDim2.new(0, 32, 0, 32)
-Logo.Position = UDim2.new(0, 10, 0, 10)
+Logo.Size = UDim2.new(0, 28, 0, 28)
+Logo.Position = UDim2.new(0, 9, 0, 9)
 Logo.BackgroundColor3 = T.Accent
 Logo.BorderSizePixel = 0
 corner(Logo, 11)
@@ -319,7 +318,7 @@ LogoText.TextColor3 = T.Text
 
 local Title = Instance.new("TextLabel", Header)
 Title.Size = UDim2.new(0, 150, 0, 22)
-Title.Position = UDim2.new(0, 49, 0, 4)
+Title.Position = UDim2.new(0, 44, 0, 2)
 Title.BackgroundTransparency = 1
 Title.Text = "LIVIA PANEL"
 Title.Font = Enum.Font.GothamBold
@@ -329,7 +328,7 @@ Title.TextXAlignment = Enum.TextXAlignment.Left
 
 local Subtitle = Instance.new("TextLabel", Header)
 Subtitle.Size = UDim2.new(0, 150, 0, 14)
-Subtitle.Position = UDim2.new(0, 50, 0, 27)
+Subtitle.Position = UDim2.new(0, 45, 0, 24)
 Subtitle.BackgroundTransparency = 1
 Subtitle.Text = "MOBILE UTILITY  •  V2.1"
 Subtitle.Font = Enum.Font.GothamMedium
@@ -370,8 +369,8 @@ bindDrag(OpenBtn, OpenBtn, function() Main.Visible = true OpenBtn.Visible = fals
 bindDrag(CloseBtn, Main, function() cleanup() end)
 
 local Body = Instance.new("ScrollingFrame", Main)
-Body.Size = UDim2.new(1, 0, 1, -54)
-Body.Position = UDim2.new(0, 0, 0, 54)
+Body.Size = UDim2.new(1, 0, 1, -46)
+Body.Position = UDim2.new(0, 0, 0, 46)
 Body.BackgroundTransparency = 1
 Body.BorderSizePixel = 0
 Body.CanvasSize = UDim2.new(0, 0, 0, 0)
@@ -381,17 +380,17 @@ Body.ScrollBarThickness = 3
 Body.ScrollBarImageColor3 = T.Accent
 Body.Active = true
 local pad = Instance.new("UIPadding", Body)
-pad.PaddingTop = UDim.new(0, 8)
+pad.PaddingTop = UDim.new(0, 6)
 pad.PaddingBottom = UDim.new(0, 10)
-pad.PaddingLeft = UDim.new(0, 10)
-pad.PaddingRight = UDim.new(0, 10)
+pad.PaddingLeft = UDim.new(0, 8)
+pad.PaddingRight = UDim.new(0, 8)
 local list = Instance.new("UIListLayout", Body)
-list.Padding = UDim.new(0, 6)
+list.Padding = UDim.new(0, 5)
 list.SortOrder = Enum.SortOrder.LayoutOrder
 
 local function createRow(label, key, hasValue)
     local row = Instance.new("Frame", Body)
-    row.Size = UDim2.new(1, 0, 0, 42)
+    row.Size = UDim2.new(1, 0, 0, 38)
     row.BackgroundColor3 = T.Card
     corner(row, 10)
     stroke(row)
@@ -409,8 +408,8 @@ local function createRow(label, key, hasValue)
 
     if hasValue then
         local box = Instance.new("TextBox", row)
-        box.Size = UDim2.new(0, 46, 0, 26)
-        box.Position = UDim2.new(1, -108, 0.5, -13)
+        box.Size = UDim2.new(0, 42, 0, 24)
+        box.Position = UDim2.new(1, -104, 0.5, -12)
         box.BackgroundColor3 = T.Input
         box.Text = tostring(V[key])
         box.Font = Enum.Font.GothamBold
@@ -420,8 +419,12 @@ local function createRow(label, key, hasValue)
         corner(box, 8)
         box.FocusLost:Connect(function()
             local n = tonumber(box.Text)
-            if n and n >= 0 then
+            local limited = key == "Fullbright"
+            local minValue = limited and 1 or 0
+            local maxValue = limited and 10 or math.huge
+            if n and n >= minValue and n <= maxValue then
                 V[key] = n
+                if key == "Fullbright" and S.Fullbright then setFullbright(true) end
             else
                 box.Text = tostring(V[key])
             end
@@ -447,142 +450,50 @@ local function createRow(label, key, hasValue)
     end)
 end
 
-local sliderDrag
-
-local function createSliderRow(label, key, minValue, maxValue, step, hasToggle)
-    local rowHeight = hasToggle and 70 or 62
+local function createValueRow(label, key)
     local row = Instance.new("Frame", Body)
-    row.Size = UDim2.new(1, 0, 0, rowHeight)
+    row.Size = UDim2.new(1, 0, 0, 38)
     row.BackgroundColor3 = T.Card
     corner(row, 10)
     stroke(row)
-
     local lb = Instance.new("TextLabel", row)
-    lb.Size = UDim2.new(1, hasToggle and -78 or -20, 0, 20)
-    lb.Position = UDim2.new(0, 12, 0, 5)
+    lb.Size = UDim2.new(1, -66, 1, 0)
+    lb.Position = UDim2.new(0, 12, 0, 0)
     lb.BackgroundTransparency = 1
     lb.Text = label
     lb.Font = Enum.Font.GothamBold
     lb.TextSize = 10
     lb.TextColor3 = T.Text
     lb.TextXAlignment = Enum.TextXAlignment.Left
-    lb.TextYAlignment = Enum.TextYAlignment.Center
-
-    if hasToggle then
-        local toggle = Instance.new("TextButton", row)
-        toggle.Size = UDim2.new(0, 52, 0, 26)
-        toggle.Position = UDim2.new(1, -60, 0, 4)
-        toggle.BackgroundColor3 = T.Off
-        toggle.Text = "OFF"
-        toggle.Font = Enum.Font.GothamBold
-        toggle.TextSize = 10
-        toggle.TextColor3 = T.Text
-        toggle.AutoButtonColor = false
-        corner(toggle, 8)
-        bindDrag(toggle, Main, function()
-            S[key] = not S[key]
-            toggle.Text = S[key] and "ON" or "OFF"
-            TweenService:Create(toggle, TweenInfo.new(0.15), {
-                BackgroundColor3 = S[key] and T.On or T.Off
-            }):Play()
-            applyChange(key, S[key])
-        end)
-    end
-
-    local track = Instance.new("Frame", row)
-    track.Size = UDim2.new(1, -82, 0, 6)
-    track.Position = UDim2.new(0, 12, 0, rowHeight - 17)
-    track.BackgroundColor3 = T.Input
-    track.BorderSizePixel = 0
-    track.Active = true
-    corner(track, 4)
-
-    local fill = Instance.new("Frame", track)
-    fill.Size = UDim2.new(0, 0, 1, 0)
-    fill.BackgroundColor3 = T.Accent
-    fill.BorderSizePixel = 0
-    fill.Active = false
-    corner(fill, 4)
-
-    local knob = Instance.new("Frame", track)
-    knob.Size = UDim2.new(0, 14, 0, 14)
-    knob.AnchorPoint = Vector2.new(0.5, 0.5)
-    knob.Position = UDim2.new(0, 0, 0.5, 0)
-    knob.BackgroundColor3 = T.Text
-    knob.BorderSizePixel = 0
-    knob.Active = false
-    corner(knob, 7)
-
-    local valueLabel = Instance.new("TextLabel", row)
-    valueLabel.Size = UDim2.new(0, 48, 0, 20)
-    valueLabel.Position = UDim2.new(1, -58, 0, rowHeight - 25)
-    valueLabel.BackgroundTransparency = 1
-    valueLabel.Font = Enum.Font.GothamBold
-    valueLabel.TextSize = 10
-    valueLabel.TextColor3 = T.Accent
-    valueLabel.TextXAlignment = Enum.TextXAlignment.Right
-
-    local function renderValue(value)
-        local percent = math.clamp((value - minValue) / (maxValue - minValue), 0, 1)
-        fill.Size = UDim2.new(percent, 0, 1, 0)
-        knob.Position = UDim2.new(percent, 0, 0.5, 0)
-        if step < 1 then
-            valueLabel.Text = string.format("%.1f", value)
+    local box = Instance.new("TextBox", row)
+    box.Size = UDim2.new(0, 42, 0, 24)
+    box.Position = UDim2.new(1, -54, 0.5, -12)
+    box.BackgroundColor3 = T.Input
+    box.Text = tostring(V[key])
+    box.Font = Enum.Font.GothamBold
+    box.TextSize = 12
+    box.TextColor3 = T.Text
+    box.ClearTextOnFocus = false
+    corner(box, 8)
+    box.FocusLost:Connect(function()
+        local n = tonumber(box.Text)
+        if n and n >= 1 and n <= 10 then
+            V[key] = math.floor(n)
+            box.Text = tostring(V[key])
+            if key == "FlashlightBrightness" then updateFlashlight() end
         else
-            valueLabel.Text = string.format("%.0f", value)
+            box.Text = tostring(V[key])
         end
-    end
-
-    local function updateFromX(x)
-        local width = math.max(track.AbsoluteSize.X, 1)
-        local percent = math.clamp((x - track.AbsolutePosition.X) / width, 0, 1)
-        local raw = minValue + (maxValue - minValue) * percent
-        local value = math.clamp(math.floor(raw / step + 0.5) * step, minValue, maxValue)
-        V[key] = value
-        renderValue(value)
-
-        if key == "Fullbright" and S.Fullbright then
-            setFullbright(true)
-        elseif key == "FlashlightBrightness" or key == "FlashlightRange" or key == "FlashlightAngle" then
-            updateFlashlight()
-        end
-    end
-
-    renderValue(V[key])
-    track.InputBegan:Connect(function(input)
-        if not isPress(input) then return end
-        sliderDrag = {input = input, update = updateFromX}
-        Body.ScrollingEnabled = false
-        updateFromX(input.Position.X)
     end)
 end
-
-conns[#conns + 1] = UIS.InputChanged:Connect(function(input)
-    if not sliderDrag then return end
-    local isMouseDrag = input.UserInputType == Enum.UserInputType.MouseMovement
-        and sliderDrag.input.UserInputType == Enum.UserInputType.MouseButton1
-    if input == sliderDrag.input or isMouseDrag then
-        sliderDrag.update(input.Position.X)
-    end
-end)
-
-conns[#conns + 1] = UIS.InputEnded:Connect(function(input)
-    if not sliderDrag then return end
-    if input == sliderDrag.input or (isPress(input) and input.UserInputType == sliderDrag.input.UserInputType) then
-        sliderDrag = nil
-        Body.ScrollingEnabled = true
-    end
-end)
 
 createRow("SPEED", "Speed", true)
 createRow("JUMP", "Jump", true)
 createRow("FLY", "Fly", true)
 createRow("NO CLIP", "NoClip", false)
-createSliderRow("FULLBRIGHT", "Fullbright", 0.5, 5, 0.1, true)
+createRow("FULLBRIGHT (1-10)", "Fullbright", true)
 createRow("FLASHLIGHT", "Flashlight", false)
-createSliderRow("FLASHLIGHT POWER", "FlashlightBrightness", 0.2, 10, 0.1, false)
-createSliderRow("FLASHLIGHT RANGE", "FlashlightRange", 8, 120, 1, false)
-createSliderRow("FLASHLIGHT ANGLE", "FlashlightAngle", 30, 120, 1, false)
+createValueRow("FLASHLIGHT POWER (1-10)", "FlashlightBrightness")
 
 -- ==========================================
 -- CLEANUP
