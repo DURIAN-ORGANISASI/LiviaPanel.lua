@@ -52,6 +52,8 @@ local conns = {}
 local bv, bg
 local noclipCache = setmetatable({}, {__mode = "k"})
 local flashlight
+local flashlightPart
+local flashlightUpdateConn
 local fullbrightOriginal
 local function getChar()
     local char = LP.Character
@@ -92,11 +94,21 @@ local function setFlashlight(state)
 
     if not state then
         local oldLight = flashlight
-        if not oldLight then return end
+        if not oldLight then
+            if flashlightUpdateConn then
+                flashlightUpdateConn:Disconnect()
+                flashlightUpdateConn = nil
+            end
+            if flashlightPart then
+                flashlightPart:Destroy()
+                flashlightPart = nil
+            end
+            return
+        end
 
         local fadeOut = TweenService:Create(
             oldLight,
-            TweenInfo.new(0.32, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
+            TweenInfo.new(0.28, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
             {Brightness = 0}
         )
         flashlightTween = fadeOut
@@ -108,22 +120,53 @@ local function setFlashlight(state)
                 and flashlight == oldLight and not S.Flashlight then
                 oldLight:Destroy()
                 flashlight = nil
+
+                if flashlightUpdateConn then
+                    flashlightUpdateConn:Disconnect()
+                    flashlightUpdateConn = nil
+                end
+                if flashlightPart then
+                    flashlightPart:Destroy()
+                    flashlightPart = nil
+                end
             end
         end)
         fadeOut:Play()
         return
     end
 
-    local char = LP.Character
-    local target = char and (char:FindFirstChild("HumanoidRootPart") or char:FindFirstChild("Head"))
-    if not target then return end
+    local camera = workspace.CurrentCamera
+    if not camera then return end
 
-    if flashlight and flashlight.Parent ~= target then
-        flashlight:Destroy()
-        flashlight = nil
-    end
+    if not flashlight or not flashlight.Parent
+        or not flashlightPart or not flashlightPart.Parent then
+        if flashlightUpdateConn then
+            flashlightUpdateConn:Disconnect()
+            flashlightUpdateConn = nil
+        end
+        if flashlightPart then
+            flashlightPart:Destroy()
+            flashlightPart = nil
+        end
+        if flashlight then
+            flashlight:Destroy()
+            flashlight = nil
+        end
 
-    if not flashlight then
+        -- The hidden local anchor follows the camera at render rate.
+        -- This avoids jerky beam rotation from the character's root part.
+        flashlightPart = Instance.new("Part")
+        flashlightPart.Name = "LiviaFlashlightAnchor"
+        flashlightPart.Size = Vector3.new(0.15, 0.15, 0.15)
+        flashlightPart.Transparency = 1
+        flashlightPart.Anchored = true
+        flashlightPart.CanCollide = false
+        flashlightPart.CanTouch = false
+        flashlightPart.CanQuery = false
+        flashlightPart.CastShadow = false
+        flashlightPart.CFrame = camera.CFrame
+        flashlightPart.Parent = workspace
+
         flashlight = Instance.new("SpotLight")
         flashlight.Name = "LiviaFlashlight"
         flashlight.Color = Color3.fromRGB(255, 244, 220)
@@ -132,12 +175,20 @@ local function setFlashlight(state)
         flashlight.Brightness = 0
         flashlight.Range = 52
         flashlight.Angle = 80
-        flashlight.Parent = target
+        flashlight.Parent = flashlightPart
+
+        flashlightUpdateConn = RunService.RenderStepped:Connect(function()
+            local currentCamera = workspace.CurrentCamera
+            local anchor = flashlightPart
+            if currentCamera and anchor and anchor.Parent then
+                anchor.CFrame = currentCamera.CFrame
+            end
+        end)
     end
 
     local fadeIn = TweenService:Create(
         flashlight,
-        TweenInfo.new(0.42, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
+        TweenInfo.new(0.28, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
         {
             Brightness = math.clamp(V.FlashlightBrightness, 1, 10),
             Range = 52,
@@ -252,14 +303,8 @@ conns[#conns + 1] = RunService.Stepped:Connect(function()
     end
 end)
 
-conns[#conns + 1] = LP.CharacterAdded:Connect(function(char)
+conns[#conns + 1] = LP.CharacterAdded:Connect(function()
     noclipCache = setmetatable({}, {__mode = "k"})
-    if S.Flashlight then
-        task.defer(function()
-            local root = char:WaitForChild("HumanoidRootPart", 5)
-            if root and S.Flashlight then setFlashlight(true) end
-        end)
-    end
 end)
 
 -- ==========================================
