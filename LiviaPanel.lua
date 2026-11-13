@@ -27,6 +27,8 @@ local V = {
     Speed = 50, Jump = 100, Fly = 60,
     Fullbright = 5,
     FlashlightBrightness = 5,
+    PlayerESPDistance = 500,
+    MonsterESPDistance = 500,
 }
 
 local T = {
@@ -77,6 +79,8 @@ local function refreshESP()
     end
 
     local found = {}
+    local _, _, localRoot = getChar()
+    if not localRoot then return end
     local playerCharacters = {}
     for _, player in ipairs(Players:GetPlayers()) do
         if player.Character then playerCharacters[player.Character] = true end
@@ -88,7 +92,10 @@ local function refreshESP()
             local root = model:FindFirstChild("HumanoidRootPart") or model:FindFirstChild("Head") or model.PrimaryPart
             if humanoid and humanoid.Health > 0 and root and model ~= LP.Character then
                 local isPlayer = playerCharacters[model] == true
-                local shouldShow = (isPlayer and S.PlayerESP) or (not isPlayer and S.MonsterESP)
+                local maxDistance = isPlayer and V.PlayerESPDistance or V.MonsterESPDistance
+                local distance = (root.Position - localRoot.Position).Magnitude
+                local shouldShow = ((isPlayer and S.PlayerESP) or (not isPlayer and S.MonsterESP))
+                    and distance <= maxDistance
                 if shouldShow then
                     found[model] = true
                     local color = isPlayer and Color3.fromRGB(65, 190, 255) or Color3.fromRGB(255, 75, 90)
@@ -419,7 +426,7 @@ local Subtitle = Instance.new("TextLabel", Header)
 Subtitle.Size = UDim2.new(0, 150, 0, 14)
 Subtitle.Position = UDim2.new(0, 45, 0, 24)
 Subtitle.BackgroundTransparency = 1
-Subtitle.Text = "MOBILE UTILITY  •  V2.1"
+Subtitle.Text = "MOBILE UTILITY  •  V2.3"
 Subtitle.Font = Enum.Font.GothamMedium
 Subtitle.TextSize = 9
 Subtitle.TextColor3 = T.Muted
@@ -576,6 +583,46 @@ local function createValueRow(label, key)
     end)
 end
 
+
+local function createDistanceRow(label, key)
+    local row = Instance.new("Frame", Body)
+    row.Size = UDim2.new(1, 0, 0, 38)
+    row.BackgroundColor3 = T.Card
+    corner(row, 10)
+    stroke(row)
+
+    local lb = Instance.new("TextLabel", row)
+    lb.Size = UDim2.new(1, -66, 1, 0)
+    lb.Position = UDim2.new(0, 12, 0, 0)
+    lb.BackgroundTransparency = 1
+    lb.Text = label
+    lb.Font = Enum.Font.GothamBold
+    lb.TextSize = 10
+    lb.TextColor3 = T.Text
+    lb.TextXAlignment = Enum.TextXAlignment.Left
+
+    local box = Instance.new("TextBox", row)
+    box.Size = UDim2.new(0, 42, 0, 24)
+    box.Position = UDim2.new(1, -54, 0.5, -12)
+    box.BackgroundColor3 = T.Input
+    box.Text = tostring(V[key])
+    box.Font = Enum.Font.GothamBold
+    box.TextSize = 12
+    box.TextColor3 = T.Text
+    box.ClearTextOnFocus = false
+    corner(box, 8)
+    box.FocusLost:Connect(function()
+        local n = tonumber(box.Text)
+        if n and n >= 1 and n <= 500 then
+            V[key] = math.floor(n)
+            box.Text = tostring(V[key])
+            refreshESP()
+        else
+            box.Text = tostring(V[key])
+        end
+    end)
+end
+
 createRow("SPEED", "Speed", true)
 createRow("JUMP", "Jump", true)
 createRow("FLY", "Fly", true)
@@ -583,7 +630,9 @@ createRow("FULLBRIGHT (1-10)", "Fullbright", true)
 createRow("FLASHLIGHT", "Flashlight", false)
 createValueRow("FLASHLIGHT POWER (1-10)", "FlashlightBrightness")
 createRow("ESP PLAYER", "PlayerESP", false)
+createDistanceRow("PLAYER DISTANCE (1-500)", "PlayerESPDistance")
 createRow("ESP MONSTER", "MonsterESP", false)
+createDistanceRow("MONSTER DISTANCE (1-500)", "MonsterESPDistance")
 createRow("NO CLIP", "NoClip", false)
 
 -- ==========================================
