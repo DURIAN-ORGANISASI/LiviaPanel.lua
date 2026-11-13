@@ -1,5 +1,5 @@
 --[[
-    Livia Panel v3.0
+    Livia Panel v3.1
     Speed | Jump | Fly | Fullbright | Flashlight | No Clip
     Touch-first utility panel.
 ]]
@@ -421,10 +421,11 @@ sg.ResetOnSpawn = false
 
 local Main = Instance.new("Frame", sg)
 local initialViewport = workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize or Vector2.new(800, 600)
-local panelWidth = math.clamp(initialViewport.X - 28, 200, 248)
-local panelHeight = math.clamp(initialViewport.Y - 36, 260, 292)
+local panelWidth = math.clamp(initialViewport.X - 28, 210, 232)
+local panelHeight = math.clamp(initialViewport.Y - 36, 252, 266)
 Main.Size = UDim2.fromOffset(panelWidth, panelHeight)
-Main.Position = UDim2.new(0.5, -panelWidth / 2, 0.5, -panelHeight / 2)
+Main.AnchorPoint = Vector2.new(0.5, 0.5)
+Main.Position = UDim2.fromScale(0.5, 0.5)
 Main.BackgroundColor3 = T.BG
 Main.BorderSizePixel = 0
 Main.ClipsDescendants = true
@@ -432,7 +433,7 @@ corner(Main, 12)
 stroke(Main)
 
 local Header = Instance.new("Frame", Main)
-Header.Size = UDim2.new(1, 0, 0, 40)
+Header.Size = UDim2.new(1, 0, 0, 38)
 Header.BackgroundColor3 = T.Panel
 Header.BorderSizePixel = 0
 corner(Header, 12)
@@ -458,7 +459,7 @@ line.BackgroundColor3 = T.Accent
 line.BorderSizePixel = 0
 
 local Logo = Instance.new("Frame", Header)
-Logo.Size = UDim2.new(0, 24, 0, 24)
+Logo.Size = UDim2.new(0, 22, 0, 22)
 Logo.Position = UDim2.new(0, 8, 0, 8)
 Logo.BackgroundColor3 = T.Accent
 Logo.BorderSizePixel = 0
@@ -472,33 +473,33 @@ LogoText.Size = UDim2.new(1, 0, 1, 0)
 LogoText.BackgroundTransparency = 1
 LogoText.Text = "L"
 LogoText.Font = Enum.Font.GothamBlack
-LogoText.TextSize = 17
+LogoText.TextSize = 16
 LogoText.TextColor3 = T.Text
 
 local Title = Instance.new("TextLabel", Header)
-Title.Size = UDim2.new(1, -112, 0, 19)
-Title.Position = UDim2.new(0, 40, 0, 3)
+Title.Size = UDim2.new(1, -104, 0, 18)
+Title.Position = UDim2.new(0, 38, 0, 2)
 Title.BackgroundTransparency = 1
 Title.Text = "LIVIA PANEL"
 Title.Font = Enum.Font.GothamBold
-Title.TextSize = 12
+Title.TextSize = 11
 Title.TextColor3 = T.Text
 Title.TextXAlignment = Enum.TextXAlignment.Left
 
 local Subtitle = Instance.new("TextLabel", Header)
-Subtitle.Size = UDim2.new(1, -112, 0, 11)
-Subtitle.Position = UDim2.new(0, 40, 0, 22)
+Subtitle.Size = UDim2.new(1, -104, 0, 10)
+Subtitle.Position = UDim2.new(0, 38, 0, 20)
 Subtitle.BackgroundTransparency = 1
-Subtitle.Text = "COMPACT PANEL  •  V3.0"
+Subtitle.Text = "COMPACT PANEL  •  V3.1"
 Subtitle.Font = Enum.Font.GothamMedium
-Subtitle.TextSize = 8
+Subtitle.TextSize = 7
 Subtitle.TextColor3 = T.Muted
 Subtitle.TextXAlignment = Enum.TextXAlignment.Left
 
 local function headBtn(x, txt, col)
     local b = Instance.new("TextButton", Header)
-    b.Size = UDim2.new(0, 24, 0, 24)
-    b.Position = UDim2.new(1, x, 0.5, -12)
+    b.Size = UDim2.new(0, 22, 0, 22)
+    b.Position = UDim2.new(1, x, 0.5, -11)
     b.BackgroundColor3 = col
     b.Text = txt
     b.Font = Enum.Font.GothamBold
@@ -508,8 +509,8 @@ local function headBtn(x, txt, col)
     corner(b, 8)
     return b
 end
-local CloseBtn = headBtn(-30, "X", T.Red)
-local MinBtn = headBtn(-58, "-", T.Input)
+local CloseBtn = headBtn(-28, "X", T.Red)
+local MinBtn = headBtn(-54, "-", T.Input)
 
 local OpenBtn = Instance.new("TextButton", sg)
 OpenBtn.Size = UDim2.new(0, 40, 0, 40)
@@ -528,8 +529,8 @@ bindDrag(OpenBtn, OpenBtn, function() Main.Visible = true OpenBtn.Visible = fals
 bindDrag(CloseBtn, Main, function() cleanup() end)
 
 local Body = Instance.new("ScrollingFrame", Main)
-Body.Size = UDim2.new(1, 0, 1, -40)
-Body.Position = UDim2.new(0, 0, 0, 40)
+Body.Size = UDim2.new(1, 0, 1, -38)
+Body.Position = UDim2.new(0, 0, 0, 38)
 Body.BackgroundTransparency = 1
 Body.BorderSizePixel = 0
 Body.CanvasSize = UDim2.new(0, 0, 0, 0)
@@ -539,36 +540,37 @@ Body.ScrollBarThickness = 2
 Body.ScrollBarImageColor3 = T.Accent
 Body.Active = true
 local pad = Instance.new("UIPadding", Body)
-pad.PaddingTop = UDim.new(0, 8)
-pad.PaddingBottom = UDim.new(0, 8)
-pad.PaddingLeft = UDim.new(0, 8)
-pad.PaddingRight = UDim.new(0, 8)
+pad.PaddingTop = UDim.new(0, 6)
+pad.PaddingBottom = UDim.new(0, 6)
+pad.PaddingLeft = UDim.new(0, 6)
+pad.PaddingRight = UDim.new(0, 6)
 local list = Instance.new("UIListLayout", Body)
-list.Padding = UDim.new(0, 5)
+list.Padding = UDim.new(0, 4)
 list.SortOrder = Enum.SortOrder.LayoutOrder
 
 local function createRow(label, key, hasValue)
     local row = Instance.new("Frame", Body)
-    row.Size = UDim2.new(1, 0, 0, 32)
+    row.Size = UDim2.new(1, 0, 0, 30)
     row.BackgroundColor3 = T.Card
+    row.ClipsDescendants = true
     corner(row, 8)
     stroke(row)
 
     local lb = Instance.new("TextLabel", row)
-    lb.Size = UDim2.new(1, hasValue and -110 or -68, 1, 0)
-    lb.Position = UDim2.new(0, 10, 0, 0)
+    lb.Size = UDim2.new(1, hasValue and -103 or -60, 1, 0)
+    lb.Position = UDim2.new(0, 9, 0, 0)
     lb.BackgroundTransparency = 1
     lb.Text = label
     lb.Font = Enum.Font.GothamBold
-    lb.TextSize = 11
+    lb.TextSize = 10
     lb.TextColor3 = T.Text
     lb.TextXAlignment = Enum.TextXAlignment.Left
     lb.TextYAlignment = Enum.TextYAlignment.Center
 
     if hasValue then
         local box = Instance.new("TextBox", row)
-        box.Size = UDim2.new(0, 34, 0, 22)
-        box.Position = UDim2.new(1, -92, 0.5, -11)
+        box.Size = UDim2.new(0, 34, 0, 20)
+        box.Position = UDim2.new(1, -87, 0.5, -10)
         box.BackgroundColor3 = T.Input
         local valueKey = key == "Flashlight" and "FlashlightBrightness" or key
         box.Text = tostring(V[valueKey])
@@ -596,12 +598,12 @@ local function createRow(label, key, hasValue)
     end
 
     local btn = Instance.new("TextButton", row)
-    btn.Size = UDim2.new(0, 42, 0, 23)
-    btn.Position = UDim2.new(1, -50, 0.5, -11.5)
+    btn.Size = UDim2.new(0, 40, 0, 22)
+    btn.Position = UDim2.new(1, -47, 0.5, -11)
     btn.BackgroundColor3 = T.Off
     btn.Text = "OFF"
     btn.Font = Enum.Font.GothamBold
-    btn.TextSize = 10
+    btn.TextSize = 9
     btn.TextColor3 = T.Text
     btn.AutoButtonColor = false
     corner(btn, 8)
