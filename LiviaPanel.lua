@@ -552,44 +552,6 @@ local function createRow(label, key, hasValue)
     end)
 end
 
-local function createValueRow(label, key)
-    local row = Instance.new("Frame", Body)
-    row.Size = UDim2.new(1, 0, 0, 38)
-    row.BackgroundColor3 = T.Card
-    corner(row, 10)
-    stroke(row)
-    local lb = Instance.new("TextLabel", row)
-    lb.Size = UDim2.new(1, -66, 1, 0)
-    lb.Position = UDim2.new(0, 12, 0, 0)
-    lb.BackgroundTransparency = 1
-    lb.Text = label
-    lb.Font = Enum.Font.GothamBold
-    lb.TextSize = 10
-    lb.TextColor3 = T.Text
-    lb.TextXAlignment = Enum.TextXAlignment.Left
-    local box = Instance.new("TextBox", row)
-    box.Size = UDim2.new(0, 42, 0, 24)
-    box.Position = UDim2.new(1, -54, 0.5, -12)
-    box.BackgroundColor3 = T.Input
-    box.Text = tostring(V[key])
-    box.Font = Enum.Font.GothamBold
-    box.TextSize = 12
-    box.TextColor3 = T.Text
-    box.ClearTextOnFocus = false
-    corner(box, 8)
-    box.FocusLost:Connect(function()
-        local n = tonumber(box.Text)
-        if n and n >= 1 and n <= 10 then
-            V[key] = math.floor(n)
-            box.Text = tostring(V[key])
-            if key == "FlashlightBrightness" then updateFlashlight() end
-        else
-            box.Text = tostring(V[key])
-        end
-    end)
-end
-
-
 local function createColorRow(label, key)
     local row=Instance.new("Frame",Body)
     row.Size=UDim2.new(1,0,0,38); row.BackgroundColor3=T.Card
@@ -625,8 +587,8 @@ createRow("FLY", "Fly", true)
 createRow("FULLBRIGHT (1-10)", "Fullbright", true)
 createRow("FLASHLIGHT", "Flashlight", true)
 createRow("ESP PLAYER", "PlayerESP", true)
-createRow("ESP MONSTER", "MonsterESP", true)
 createColorRow("PLAYER ESP COLOR", "PlayerESPColor")
+createRow("ESP MONSTER", "MonsterESP", true)
 createColorRow("MONSTER ESP COLOR", "MonsterESPColor")
 createRow("NO CLIP", "NoClip", false)
 
