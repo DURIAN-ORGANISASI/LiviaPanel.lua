@@ -51,6 +51,7 @@ local function stroke(o) local s = Instance.new("UIStroke", o) s.Color = T.Strok
 local conns = {}
 local bv, bg
 local noclipCache = setmetatable({}, {__mode = "k"})
+local movementOriginals = setmetatable({}, {__mode = "k"})
 local flashlight
 local flashlightPart
 local flashlightUpdateConn
@@ -74,6 +75,52 @@ local function restoreNoClip()
         if part and part.Parent then part.CanCollide = original end
     end
     noclipCache = setmetatable({}, {__mode = "k"})
+end
+
+-- Change only the local character and restore its actual previous values.
+-- Game/server movement limits remain authoritative.
+local function applyMovement(key, state)
+    local _, hum = getChar()
+    if not hum then return end
+
+    local saved = movementOriginals[hum]
+    if not saved then
+        saved = {}
+        movementOriginals[hum] = saved
+    end
+
+    if key == "Speed" then
+        if state then
+            if saved.WalkSpeed == nil then
+                saved.WalkSpeed = hum.WalkSpeed
+            end
+            hum.WalkSpeed = V.Speed
+        elseif saved.WalkSpeed ~= nil then
+            hum.WalkSpeed = saved.WalkSpeed
+            saved.WalkSpeed = nil
+        end
+    elseif key == "Jump" then
+        if state then
+            if saved.UseJumpPower == nil then
+                saved.UseJumpPower = hum.UseJumpPower
+                saved.JumpPower = hum.JumpPower
+                saved.JumpHeight = hum.JumpHeight
+            end
+            hum.UseJumpPower = true
+            hum.JumpPower = V.Jump
+        elseif saved.UseJumpPower ~= nil then
+            hum.UseJumpPower = saved.UseJumpPower
+            hum.JumpPower = saved.JumpPower
+            hum.JumpHeight = saved.JumpHeight
+            saved.UseJumpPower = nil
+            saved.JumpPower = nil
+            saved.JumpHeight = nil
+        end
+    end
+
+    if next(saved) == nil then
+        movementOriginals[hum] = nil
+    end
 end
 
 local flashlightTween
@@ -244,21 +291,22 @@ local function updateFlashlight()
 end
 
 local function applyChange(key, state)
-    local _, hum, hrp = getChar()
-    if key == "Speed" and not state and hum then hum.WalkSpeed = 16 end
-    if key == "Jump" and not state and hum then hum.UseJumpPower = true hum.JumpPower = 50 end
-    if key == "Fly" and not state then stopFly() end
-    if key == "NoClip" and not state then restoreNoClip() end
-    if key == "Fullbright" then setFullbright(state) end
-    if key == "Flashlight" then setFlashlight(state) end
+    if key == "Speed" or key == "Jump" then
+        applyMovement(key, state)
+    elseif key == "Fly" and not state then
+        stopFly()
+    elseif key == "NoClip" and not state then
+        restoreNoClip()
+    elseif key == "Fullbright" then
+        setFullbright(state)
+    elseif key == "Flashlight" then
+        setFlashlight(state)
+    end
 end
 
 conns[#conns + 1] = RunService.Heartbeat:Connect(function()
     local _, hum, hrp = getChar()
     if not hum or not hrp then return end
-
-    if S.Speed then hum.WalkSpeed = V.Speed end
-    if S.Jump then hum.UseJumpPower = true hum.JumpPower = V.Jump end
 
     if S.Fly then
         local cam = workspace.CurrentCamera
@@ -305,6 +353,13 @@ end)
 
 conns[#conns + 1] = LP.CharacterAdded:Connect(function()
     noclipCache = setmetatable({}, {__mode = "k"})
+    task.defer(function()
+        local char = LP.Character
+        local hum = char and char:WaitForChild("Humanoid", 5)
+        if not hum then return end
+        if S.Speed then applyMovement("Speed", true) end
+        if S.Jump then applyMovement("Jump", true) end
+    end)
 end)
 
 -- ==========================================
@@ -365,10 +420,14 @@ sg.Name = "LiviaPanel"
 sg.ResetOnSpawn = false
 
 local Main = Instance.new("Frame", sg)
-Main.Size = UDim2.new(0, 280, 0, 340)
-Main.Position = UDim2.new(0.5, -140, 0.5, -170)
+local initialViewport = workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize or Vector2.new(800, 600)
+local panelWidth = math.clamp(initialViewport.X - 24, 260, 340)
+local panelHeight = math.clamp(initialViewport.Y - 40, 340, 440)
+Main.Size = UDim2.fromOffset(panelWidth, panelHeight)
+Main.Position = UDim2.new(0.5, -panelWidth / 2, 0.5, -panelHeight / 2)
 Main.BackgroundColor3 = T.BG
 Main.BorderSizePixel = 0
+Main.ClipsDescendants = true
 corner(Main, 14)
 stroke(Main)
 
@@ -490,26 +549,26 @@ list.SortOrder = Enum.SortOrder.LayoutOrder
 
 local function createRow(label, key, hasValue)
     local row = Instance.new("Frame", Body)
-    row.Size = UDim2.new(1, 0, 0, 38)
+    row.Size = UDim2.new(1, 0, 0, 42)
     row.BackgroundColor3 = T.Card
     corner(row, 10)
     stroke(row)
 
     local lb = Instance.new("TextLabel", row)
-    lb.Size = UDim2.new(1, -125, 1, 0)
+    lb.Size = UDim2.new(1, -130, 1, 0)
     lb.Position = UDim2.new(0, 12, 0, 0)
     lb.BackgroundTransparency = 1
     lb.Text = label
     lb.Font = Enum.Font.GothamBold
-    lb.TextSize = 11
+    lb.TextSize = 12
     lb.TextColor3 = T.Text
     lb.TextXAlignment = Enum.TextXAlignment.Left
     lb.TextYAlignment = Enum.TextYAlignment.Center
 
     if hasValue then
         local box = Instance.new("TextBox", row)
-        box.Size = UDim2.new(0, 42, 0, 24)
-        box.Position = UDim2.new(1, -104, 0.5, -12)
+        box.Size = UDim2.new(0, 44, 0, 26)
+        box.Position = UDim2.new(1, -112, 0.5, -13)
         box.BackgroundColor3 = T.Input
         local valueKey = key == "Flashlight" and "FlashlightBrightness" or key
         box.Text = tostring(V[valueKey])
@@ -537,8 +596,8 @@ local function createRow(label, key, hasValue)
     end
 
     local btn = Instance.new("TextButton", row)
-    btn.Size = UDim2.new(0, 52, 0, 28)
-    btn.Position = UDim2.new(1, -60, 0.5, -14)
+    btn.Size = UDim2.new(0, 54, 0, 30)
+    btn.Position = UDim2.new(1, -62, 0.5, -15)
     btn.BackgroundColor3 = T.Off
     btn.Text = "OFF"
     btn.Font = Enum.Font.GothamBold
@@ -555,11 +614,31 @@ local function createRow(label, key, hasValue)
     end)
 end
 
-createRow("SPEED", "Speed", true)
-createRow("JUMP", "Jump", true)
-createRow("FLY", "Fly", true)
+local function createSection(label)
+    local section = Instance.new("Frame", Body)
+    section.Size = UDim2.new(1, 0, 0, 18)
+    section.BackgroundTransparency = 1
+
+    local textLabel = Instance.new("TextLabel", section)
+    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.BackgroundTransparency = 1
+    textLabel.Text = label
+    textLabel.Font = Enum.Font.GothamBold
+    textLabel.TextSize = 10
+    textLabel.TextColor3 = T.Muted
+    textLabel.TextXAlignment = Enum.TextXAlignment.Left
+end
+
+createSection("MOVEMENT")
+createRow("SPRINT SPEED", "Speed", true)
+createRow("JUMP POWER", "Jump", true)
+createRow("FLY SPEED", "Fly", true)
+
+createSection("LIGHTING")
 createRow("FULLBRIGHT (1-10)", "Fullbright", true)
-createRow("FLASHLIGHT", "Flashlight", true)
+createRow("FLASHLIGHT POWER", "Flashlight", true)
+
+createSection("UTILITY")
 createRow("NO CLIP", "NoClip", false)
 
 -- ==========================================
