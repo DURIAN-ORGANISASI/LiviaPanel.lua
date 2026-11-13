@@ -75,34 +75,47 @@ local function restoreNoClip()
 end
 
 local flashlightTween
+local flashlightTweenVersion = 0
+
+local function cancelFlashlightTween()
+    flashlightTweenVersion += 1
+    if flashlightTween then
+        local previousTween = flashlightTween
+        flashlightTween = nil
+        previousTween:Cancel()
+    end
+    return flashlightTweenVersion
+end
 
 local function setFlashlight(state)
-    if flashlightTween then
-        flashlightTween:Cancel()
-        flashlightTween = nil
-    end
+    local tweenVersion = cancelFlashlightTween()
 
     if not state then
         local oldLight = flashlight
         if not oldLight then return end
-        flashlightTween = TweenService:Create(
+
+        local fadeOut = TweenService:Create(
             oldLight,
-            TweenInfo.new(0.22, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
+            TweenInfo.new(0.32, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
             {Brightness = 0}
         )
-        flashlightTween:Play()
-        flashlightTween.Completed:Connect(function()
-            if flashlight == oldLight and not S.Flashlight then
+        flashlightTween = fadeOut
+        fadeOut.Completed:Connect(function(playbackState)
+            if tweenVersion ~= flashlightTweenVersion then return end
+            flashlightTween = nil
+
+            if playbackState == Enum.PlaybackState.Completed
+                and flashlight == oldLight and not S.Flashlight then
                 oldLight:Destroy()
                 flashlight = nil
             end
-            flashlightTween = nil
         end)
+        fadeOut:Play()
         return
     end
 
     local char = LP.Character
-    local target = char and char:FindFirstChild("HumanoidRootPart")
+    local target = char and (char:FindFirstChild("HumanoidRootPart") or char:FindFirstChild("Head"))
     if not target then return end
 
     if flashlight and flashlight.Parent ~= target then
@@ -122,16 +135,22 @@ local function setFlashlight(state)
         flashlight.Parent = target
     end
 
-    flashlightTween = TweenService:Create(
+    local fadeIn = TweenService:Create(
         flashlight,
-        TweenInfo.new(0.28, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
+        TweenInfo.new(0.42, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
         {
             Brightness = math.clamp(V.FlashlightBrightness, 1, 10),
             Range = 52,
             Angle = 80,
         }
     )
-    flashlightTween:Play()
+    flashlightTween = fadeIn
+    fadeIn.Completed:Connect(function()
+        if tweenVersion == flashlightTweenVersion then
+            flashlightTween = nil
+        end
+    end)
+    fadeIn:Play()
 end
 
 local function setFullbright(state)
@@ -462,7 +481,7 @@ local function createRow(label, key, hasValue)
             local minValue = limited and 1 or 0
             local maxValue = limited and 10 or math.huge
             if n and n >= minValue and n <= maxValue then
-                V[valueKey] = limited and math.floor(n) or n
+                V[valueKey] = key == "Fullbright" and math.floor(n) or n
                 if key == "Fullbright" and S.Fullbright then setFullbright(true) end
                 if isFlashlight then updateFlashlight() end
                 box.Text = tostring(V[valueKey])
