@@ -29,6 +29,8 @@ local V = {
     FlashlightBrightness = 5,
     PlayerESPDistance = 500,
     MonsterESPDistance = 500,
+    PlayerESPColor = Color3.fromRGB(65, 190, 255),
+    MonsterESPColor = Color3.fromRGB(255, 75, 90),
 }
 
 local T = {
@@ -66,18 +68,16 @@ espFolder.Parent = CoreGui
 local function clearESP(model)
     local entry = espObjects[model]
     if not entry then return end
-    if entry.highlight then entry.highlight:Destroy() end
-    if entry.billboard then entry.billboard:Destroy() end
+    for _, beam in ipairs(entry.beams or {}) do beam:Destroy() end
+    for _, attachment in ipairs(entry.attachments or {}) do attachment:Destroy() end
     espObjects[model] = nil
 end
 
 local function refreshESP()
-    local active = S.PlayerESP or S.MonsterESP
-    if not active then
+    if not S.PlayerESP and not S.MonsterESP then
         for model in pairs(espObjects) do clearESP(model) end
         return
     end
-
     local found = {}
     local _, _, localRoot = getChar()
     if not localRoot then return end
@@ -85,7 +85,15 @@ local function refreshESP()
     for _, player in ipairs(Players:GetPlayers()) do
         if player.Character then playerCharacters[player.Character] = true end
     end
-
+    local links = {
+        {"Head","UpperTorso"},{"UpperTorso","LowerTorso"},
+        {"Head","Torso"},{"Torso","HumanoidRootPart"},
+        {"UpperTorso","LeftUpperArm"},{"LeftUpperArm","LeftLowerArm"},{"LeftLowerArm","LeftHand"},
+        {"UpperTorso","RightUpperArm"},{"RightUpperArm","RightLowerArm"},{"RightLowerArm","RightHand"},
+        {"LowerTorso","LeftUpperLeg"},{"LeftUpperLeg","LeftLowerLeg"},{"LeftLowerLeg","LeftFoot"},
+        {"LowerTorso","RightUpperLeg"},{"RightUpperLeg","RightLowerLeg"},{"RightLowerLeg","RightFoot"},
+        {"Torso","Left Arm"},{"Torso","Right Arm"},{"Torso","Left Leg"},{"Torso","Right Leg"},
+    }
     for _, model in ipairs(workspace:GetDescendants()) do
         if model:IsA("Model") then
             local humanoid = model:FindFirstChildOfClass("Humanoid")
@@ -93,56 +101,43 @@ local function refreshESP()
             if humanoid and humanoid.Health > 0 and root and model ~= LP.Character then
                 local isPlayer = playerCharacters[model] == true
                 local distance = (root.Position - localRoot.Position).Magnitude
+                local enabled = isPlayer and S.PlayerESP or (not isPlayer and S.MonsterESP)
                 local maxDistance = isPlayer and V.PlayerESPDistance or V.MonsterESPDistance
-                local shouldShow = ((isPlayer and S.PlayerESP) or (not isPlayer and S.MonsterESP))
-                    and distance <= maxDistance
-                if shouldShow then
+                if enabled and distance <= maxDistance then
                     found[model] = true
-                    local color = isPlayer and Color3.fromRGB(65, 190, 255) or Color3.fromRGB(255, 75, 90)
-                    local label = isPlayer and model.Name or (model.Name ~= "" and model.Name or "MONSTER")
+                    local color = isPlayer and V.PlayerESPColor or V.MonsterESPColor
                     local entry = espObjects[model]
-                    if not entry then
-                        local highlight = Instance.new("Highlight")
-                        highlight.Name = "LiviaESPHighlight"
-                        highlight.Adornee = model
-                        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                        highlight.FillTransparency = 0.78
-                        highlight.OutlineTransparency = 0
-                        highlight.Parent = espFolder
-
-                        local billboard = Instance.new("BillboardGui")
-                        billboard.Name = "LiviaESPLabel"
-                        billboard.Adornee = root
-                        billboard.Size = UDim2.fromOffset(150, 28)
-                        billboard.StudsOffset = Vector3.new(0, 3, 0)
-                        billboard.AlwaysOnTop = true
-                        billboard.Parent = espFolder
-
-                        local text = Instance.new("TextLabel")
-                        text.Size = UDim2.fromScale(1, 1)
-                        text.BackgroundTransparency = 1
-                        text.Font = Enum.Font.GothamBold
-                        text.TextSize = 12
-                        text.TextStrokeTransparency = 0.25
-                        text.Parent = billboard
-                        entry = {highlight = highlight, billboard = billboard, text = text}
-                        espObjects[model] = entry
+                    if not entry then entry={beams={},attachments={},links={}} espObjects[model]=entry end
+                    for _, pair in ipairs(links) do
+                        local p0,p1=model:FindFirstChild(pair[1]),model:FindFirstChild(pair[2])
+                        if p0 and p1 and p0:IsA("BasePart") and p1:IsA("BasePart") then
+                            local key=pair[1].."|"..pair[2]
+                            local link=entry.links[key]
+                            if not link then
+                                local at0=Instance.new("Attachment"); at0.Parent=p0
+                                local at1=Instance.new("Attachment"); at1.Parent=p1
+                                local beam=Instance.new("Beam")
+                                beam.Name="LiviaESPBodyLine"
+                                beam.Attachment0=at0; beam.Attachment1=at1
+                                beam.FaceCamera=true; beam.Width0=0.045; beam.Width1=0.045
+                                beam.LightEmission=1; beam.Parent=espFolder
+                                link={beam=beam,a0=at0,a1=at1}
+                                entry.links[key]=link
+                                table.insert(entry.beams,beam)
+                                table.insert(entry.attachments,at0)
+                                table.insert(entry.attachments,at1)
+                            end
+                            link.beam.Color=ColorSequence.new(color)
+                        end
                     end
-                    entry.highlight.FillColor = color
-                    entry.highlight.OutlineColor = color
-                    entry.billboard.Adornee = root
-                    entry.text.Text = label
-                    entry.text.TextColor3 = color
                 end
             end
         end
     end
-
     for model in pairs(espObjects) do
         if not found[model] or not model.Parent then clearESP(model) end
     end
 end
-
 local function getChar()
     local char = LP.Character
     local hum = char and char:FindFirstChildOfClass("Humanoid")
@@ -507,7 +502,9 @@ local function createRow(label, key, hasValue)
         box.Size = UDim2.new(0, 42, 0, 24)
         box.Position = UDim2.new(1, -104, 0.5, -12)
         box.BackgroundColor3 = T.Input
-        local valueKey = key == "PlayerESP" and "PlayerESPDistance" or key == "MonsterESP" and "MonsterESPDistance" or key
+        local valueKey = key == "PlayerESP" and "PlayerESPDistance"
+            or key == "MonsterESP" and "MonsterESPDistance"
+            or key == "Flashlight" and "FlashlightBrightness" or key
         box.Text = tostring(V[valueKey])
         box.Font = Enum.Font.GothamBold
         box.TextSize = 12
@@ -517,18 +514,21 @@ local function createRow(label, key, hasValue)
         box.FocusLost:Connect(function()
             local n = tonumber(box.Text)
             local isDistance = key == "PlayerESP" or key == "MonsterESP"
-            local limited = key == "Fullbright"
+            local isFlashlight = key == "Flashlight"
+            local limited = key == "Fullbright" or isFlashlight
+            local valueKey = key == "PlayerESP" and "PlayerESPDistance"
+                or key == "MonsterESP" and "MonsterESPDistance"
+                or isFlashlight and "FlashlightBrightness" or key
             local minValue = (limited or isDistance) and 1 or 0
             local maxValue = isDistance and 500 or (limited and 10 or math.huge)
             if n and n >= minValue and n <= maxValue then
-                V[key == "PlayerESP" and "PlayerESPDistance" or key == "MonsterESP" and "MonsterESPDistance" or key] = isDistance and math.floor(n) or n
+                V[valueKey] = (isDistance or limited) and math.floor(n) or n
                 if key == "Fullbright" and S.Fullbright then setFullbright(true) end
-                if isDistance then
-                    box.Text = tostring(V[key == "PlayerESP" and "PlayerESPDistance" or "MonsterESPDistance"])
-                    refreshESP()
-                end
+                if isFlashlight then updateFlashlight() end
+                if isDistance then refreshESP() end
+                box.Text = tostring(V[valueKey])
             else
-                box.Text = tostring(isDistance and V[key == "PlayerESP" and "PlayerESPDistance" or "MonsterESPDistance"] or V[key])
+                box.Text = tostring(V[valueKey])
             end
         end)
     end
@@ -590,15 +590,44 @@ local function createValueRow(label, key)
 end
 
 
+local function createColorRow(label, key)
+    local row=Instance.new("Frame",Body)
+    row.Size=UDim2.new(1,0,0,38); row.BackgroundColor3=T.Card
+    corner(row,10); stroke(row)
+    local lb=Instance.new("TextLabel",row)
+    lb.Size=UDim2.new(1,-72,1,0); lb.Position=UDim2.new(0,12,0,0)
+    lb.BackgroundTransparency=1; lb.Text=label; lb.Font=Enum.Font.GothamBold
+    lb.TextSize=10; lb.TextColor3=T.Text; lb.TextXAlignment=Enum.TextXAlignment.Left
+    local box=Instance.new("TextBox",row)
+    box.Size=UDim2.new(0,58,0,24); box.Position=UDim2.new(1,-68,0.5,-12)
+    box.BackgroundColor3=T.Input
+    box.Text=string.format("#%02X%02X%02X",math.floor(V[key].R*255),math.floor(V[key].G*255),math.floor(V[key].B*255))
+    box.Font=Enum.Font.GothamBold; box.TextSize=10; box.TextColor3=T.Text
+    box.ClearTextOnFocus=false; corner(box,8)
+    box.FocusLost:Connect(function()
+        local hex=box.Text:gsub("#","")
+        if #hex==6 and hex:match("^%x%x%x%x%x%x$") then
+            local r,g,b=tonumber(hex:sub(1,2),16),tonumber(hex:sub(3,4),16),tonumber(hex:sub(5,6),16)
+            V[key]=Color3.fromRGB(r,g,b)
+            box.Text=string.format("#%02X%02X%02X",r,g,b)
+            refreshESP()
+        else
+            box.Text=string.format("#%02X%02X%02X",math.floor(V[key].R*255),math.floor(V[key].G*255),math.floor(V[key].B*255))
+        end
+    end)
+end
+
+
 
 createRow("SPEED", "Speed", true)
 createRow("JUMP", "Jump", true)
 createRow("FLY", "Fly", true)
 createRow("FULLBRIGHT (1-10)", "Fullbright", true)
-createRow("FLASHLIGHT", "Flashlight", false)
-createValueRow("FLASHLIGHT POWER (1-10)", "FlashlightBrightness")
+createRow("FLASHLIGHT", "Flashlight", true)
 createRow("ESP PLAYER", "PlayerESP", true)
 createRow("ESP MONSTER", "MonsterESP", true)
+createColorRow("PLAYER ESP COLOR", "PlayerESPColor")
+createColorRow("MONSTER ESP COLOR", "MonsterESPColor")
 createRow("NO CLIP", "NoClip", false)
 
 -- ==========================================
