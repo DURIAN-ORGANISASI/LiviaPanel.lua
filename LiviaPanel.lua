@@ -1,5 +1,5 @@
 --[[
-    Livia Panel v2.7
+    Livia Panel v2.8
     Speed | Jump | Fly | Fullbright | Flashlight | No Clip
     Touch-first utility panel.
 ]]
@@ -421,21 +421,21 @@ sg.ResetOnSpawn = false
 
 local Main = Instance.new("Frame", sg)
 local initialViewport = workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize or Vector2.new(800, 600)
-local panelWidth = math.clamp(initialViewport.X - 24, 205, 235)
-local panelHeight = math.clamp(initialViewport.Y - 32, 240, 290)
+local panelWidth = math.clamp(initialViewport.X - 24, 190, 210)
+local panelHeight = math.clamp(initialViewport.Y - 32, 220, 250)
 Main.Size = UDim2.fromOffset(panelWidth, panelHeight)
 Main.Position = UDim2.new(0.5, -panelWidth / 2, 0.5, -panelHeight / 2)
 Main.BackgroundColor3 = T.BG
 Main.BorderSizePixel = 0
 Main.ClipsDescendants = true
-corner(Main, 14)
+corner(Main, 10)
 stroke(Main)
 
 local Header = Instance.new("Frame", Main)
-Header.Size = UDim2.new(1, 0, 0, 36)
+Header.Size = UDim2.new(1, 0, 0, 32)
 Header.BackgroundColor3 = T.Panel
 Header.BorderSizePixel = 0
-corner(Header, 14)
+corner(Header, 10)
 bindDrag(Header, Main)
 
 local headerGradient = Instance.new("UIGradient")
@@ -458,8 +458,8 @@ line.BackgroundColor3 = T.Accent
 line.BorderSizePixel = 0
 
 local Logo = Instance.new("Frame", Header)
-Logo.Size = UDim2.new(0, 28, 0, 28)
-Logo.Position = UDim2.new(0, 9, 0, 9)
+Logo.Size = UDim2.new(0, 22, 0, 22)
+Logo.Position = UDim2.new(0, 7, 0, 5)
 Logo.BackgroundColor3 = T.Accent
 Logo.BorderSizePixel = 0
 corner(Logo, 11)
@@ -472,33 +472,33 @@ LogoText.Size = UDim2.new(1, 0, 1, 0)
 LogoText.BackgroundTransparency = 1
 LogoText.Text = "L"
 LogoText.Font = Enum.Font.GothamBlack
-LogoText.TextSize = 21
+LogoText.TextSize = 16
 LogoText.TextColor3 = T.Text
 
 local Title = Instance.new("TextLabel", Header)
-Title.Size = UDim2.new(1, -116, 0, 20)
-Title.Position = UDim2.new(0, 42, 0, 1)
+Title.Size = UDim2.new(1, -94, 0, 17)
+Title.Position = UDim2.new(0, 34, 0, 0)
 Title.BackgroundTransparency = 1
 Title.Text = "LIVIA PANEL"
 Title.Font = Enum.Font.GothamBold
-Title.TextSize = 12
+Title.TextSize = 10
 Title.TextColor3 = T.Text
 Title.TextXAlignment = Enum.TextXAlignment.Left
 
 local Subtitle = Instance.new("TextLabel", Header)
-Subtitle.Size = UDim2.new(1, -116, 0, 12)
-Subtitle.Position = UDim2.new(0, 42, 0, 20)
+Subtitle.Size = UDim2.new(1, -94, 0, 10)
+Subtitle.Position = UDim2.new(0, 34, 0, 17)
 Subtitle.BackgroundTransparency = 1
-Subtitle.Text = "COMPACT PANEL  •  V2.7"
+Subtitle.Text = "MINI PANEL  •  V2.8"
 Subtitle.Font = Enum.Font.GothamMedium
-Subtitle.TextSize = 7
+Subtitle.TextSize = 6
 Subtitle.TextColor3 = T.Muted
 Subtitle.TextXAlignment = Enum.TextXAlignment.Left
 
 local function headBtn(x, txt, col)
     local b = Instance.new("TextButton", Header)
-    b.Size = UDim2.new(0, 30, 0, 30)
-    b.Position = UDim2.new(1, x, 0.5, -15)
+    b.Size = UDim2.new(0, 22, 0, 22)
+    b.Position = UDim2.new(1, x, 0.5, -11)
     b.BackgroundColor3 = col
     b.Text = txt
     b.Font = Enum.Font.GothamBold
@@ -508,72 +508,72 @@ local function headBtn(x, txt, col)
     corner(b, 8)
     return b
 end
-local CloseBtn = headBtn(-36, "X", T.Red)
-local MinBtn = headBtn(-73, "-", T.Input)
+local CloseBtn = headBtn(-27, "X", T.Red)
+local MinBtn = headBtn(-53, "-", T.Input)
 
 local OpenBtn = Instance.new("TextButton", sg)
-OpenBtn.Size = UDim2.new(0, 48, 0, 48)
-OpenBtn.Position = UDim2.new(0, 20, 0.5, -24)
+OpenBtn.Size = UDim2.new(0, 40, 0, 40)
+OpenBtn.Position = UDim2.new(0, 16, 0.5, -20)
 OpenBtn.BackgroundColor3 = T.Accent
 OpenBtn.Text = "L"
 OpenBtn.Font = Enum.Font.GothamBold
-OpenBtn.TextSize = 24
+OpenBtn.TextSize = 20
 OpenBtn.TextColor3 = T.Text
 OpenBtn.AutoButtonColor = false
 OpenBtn.Visible = false
-corner(OpenBtn, 26)
+corner(OpenBtn, 22)
 
 bindDrag(MinBtn, Main, function() Main.Visible = false OpenBtn.Visible = true end)
 bindDrag(OpenBtn, OpenBtn, function() Main.Visible = true OpenBtn.Visible = false end)
 bindDrag(CloseBtn, Main, function() cleanup() end)
 
 local Body = Instance.new("ScrollingFrame", Main)
-Body.Size = UDim2.new(1, 0, 1, -36)
-Body.Position = UDim2.new(0, 0, 0, 36)
+Body.Size = UDim2.new(1, 0, 1, -32)
+Body.Position = UDim2.new(0, 0, 0, 32)
 Body.BackgroundTransparency = 1
 Body.BorderSizePixel = 0
 Body.CanvasSize = UDim2.new(0, 0, 0, 0)
 Body.AutomaticCanvasSize = Enum.AutomaticSize.Y
 Body.ScrollingDirection = Enum.ScrollingDirection.Y
-Body.ScrollBarThickness = 3
+Body.ScrollBarThickness = 2
 Body.ScrollBarImageColor3 = T.Accent
 Body.Active = true
 local pad = Instance.new("UIPadding", Body)
-pad.PaddingTop = UDim.new(0, 4)
-pad.PaddingBottom = UDim.new(0, 6)
-pad.PaddingLeft = UDim.new(0, 8)
-pad.PaddingRight = UDim.new(0, 8)
+pad.PaddingTop = UDim.new(0, 3)
+pad.PaddingBottom = UDim.new(0, 4)
+pad.PaddingLeft = UDim.new(0, 6)
+pad.PaddingRight = UDim.new(0, 6)
 local list = Instance.new("UIListLayout", Body)
-list.Padding = UDim.new(0, 4)
+list.Padding = UDim.new(0, 3)
 list.SortOrder = Enum.SortOrder.LayoutOrder
 
 local function createRow(label, key, hasValue)
     local row = Instance.new("Frame", Body)
-    row.Size = UDim2.new(1, 0, 0, 30)
+    row.Size = UDim2.new(1, 0, 0, 26)
     row.BackgroundColor3 = T.Card
-    corner(row, 10)
+    corner(row, 8)
     stroke(row)
 
     local lb = Instance.new("TextLabel", row)
-    lb.Size = UDim2.new(1, -96, 1, 0)
-    lb.Position = UDim2.new(0, 9, 0, 0)
+    lb.Size = UDim2.new(1, -82, 1, 0)
+    lb.Position = UDim2.new(0, 7, 0, 0)
     lb.BackgroundTransparency = 1
     lb.Text = label
     lb.Font = Enum.Font.GothamBold
-    lb.TextSize = 10
+    lb.TextSize = 9
     lb.TextColor3 = T.Text
     lb.TextXAlignment = Enum.TextXAlignment.Left
     lb.TextYAlignment = Enum.TextYAlignment.Center
 
     if hasValue then
         local box = Instance.new("TextBox", row)
-        box.Size = UDim2.new(0, 32, 0, 20)
-        box.Position = UDim2.new(1, -80, 0.5, -10)
+        box.Size = UDim2.new(0, 28, 0, 18)
+        box.Position = UDim2.new(1, -68, 0.5, -9)
         box.BackgroundColor3 = T.Input
         local valueKey = key == "Flashlight" and "FlashlightBrightness" or key
         box.Text = tostring(V[valueKey])
         box.Font = Enum.Font.GothamBold
-        box.TextSize = 10
+        box.TextSize = 9
         box.TextColor3 = T.Text
         box.ClearTextOnFocus = false
         corner(box, 8)
@@ -596,12 +596,12 @@ local function createRow(label, key, hasValue)
     end
 
     local btn = Instance.new("TextButton", row)
-    btn.Size = UDim2.new(0, 40, 0, 22)
-    btn.Position = UDim2.new(1, -46, 0.5, -11)
+    btn.Size = UDim2.new(0, 34, 0, 19)
+    btn.Position = UDim2.new(1, -38, 0.5, -9.5)
     btn.BackgroundColor3 = T.Off
     btn.Text = "OFF"
     btn.Font = Enum.Font.GothamBold
-    btn.TextSize = 10
+    btn.TextSize = 9
     btn.TextColor3 = T.Text
     btn.AutoButtonColor = false
     corner(btn, 8)
