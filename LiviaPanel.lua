@@ -1,7 +1,7 @@
 --[[
     Livia Panel v2.2
-    Speed | Jump | Fly | Fullbright | Flashlight | ESP | No Clip
-    Universal humanoid-based local ESP; touch-first UI.
+    Speed | Jump | Fly | Fullbright | Flashlight | No Clip
+    Touch-first utility panel.
 ]]
 
 local Players = game:GetService("Players")
@@ -74,32 +74,64 @@ local function restoreNoClip()
     noclipCache = setmetatable({}, {__mode = "k"})
 end
 
+local flashlightTween
+
 local function setFlashlight(state)
+    if flashlightTween then
+        flashlightTween:Cancel()
+        flashlightTween = nil
+    end
+
     if not state then
-        if flashlight then flashlight:Destroy() flashlight = nil end
+        local oldLight = flashlight
+        if not oldLight then return end
+        flashlightTween = TweenService:Create(
+            oldLight,
+            TweenInfo.new(0.22, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
+            {Brightness = 0}
+        )
+        flashlightTween:Play()
+        flashlightTween.Completed:Connect(function()
+            if flashlight == oldLight and not S.Flashlight then
+                oldLight:Destroy()
+                flashlight = nil
+            end
+            flashlightTween = nil
+        end)
         return
     end
 
     local char = LP.Character
-    local target = char and (char:FindFirstChild("Head") or char:FindFirstChild("HumanoidRootPart"))
+    local target = char and char:FindFirstChild("HumanoidRootPart")
     if not target then return end
 
     if flashlight and flashlight.Parent ~= target then
         flashlight:Destroy()
         flashlight = nil
     end
+
     if not flashlight then
         flashlight = Instance.new("SpotLight")
         flashlight.Name = "LiviaFlashlight"
         flashlight.Color = Color3.fromRGB(255, 244, 220)
         flashlight.Shadows = false
         flashlight.Face = Enum.NormalId.Front
+        flashlight.Brightness = 0
+        flashlight.Range = 52
+        flashlight.Angle = 80
         flashlight.Parent = target
     end
 
-    flashlight.Brightness = V.FlashlightBrightness
-    flashlight.Range = 48
-    flashlight.Angle = 75
+    flashlightTween = TweenService:Create(
+        flashlight,
+        TweenInfo.new(0.28, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
+        {
+            Brightness = math.clamp(V.FlashlightBrightness, 1, 10),
+            Range = 52,
+            Angle = 80,
+        }
+    )
+    flashlightTween:Play()
 end
 
 local function setFullbright(state)
@@ -205,8 +237,8 @@ conns[#conns + 1] = LP.CharacterAdded:Connect(function(char)
     noclipCache = setmetatable({}, {__mode = "k"})
     if S.Flashlight then
         task.defer(function()
-            local head = char:WaitForChild("Head", 5)
-            if head and S.Flashlight then setFlashlight(true) end
+            local root = char:WaitForChild("HumanoidRootPart", 5)
+            if root and S.Flashlight then setFlashlight(true) end
         end)
     end
 end)
@@ -334,7 +366,7 @@ local Subtitle = Instance.new("TextLabel", Header)
 Subtitle.Size = UDim2.new(0, 150, 0, 14)
 Subtitle.Position = UDim2.new(0, 45, 0, 24)
 Subtitle.BackgroundTransparency = 1
-Subtitle.Text = "MOBILE UTILITY  •  V2.3"
+Subtitle.Text = "MOBILE UTILITY  •  V2.4"
 Subtitle.Font = Enum.Font.GothamMedium
 Subtitle.TextSize = 9
 Subtitle.TextColor3 = T.Muted
@@ -415,9 +447,7 @@ local function createRow(label, key, hasValue)
         box.Size = UDim2.new(0, 42, 0, 24)
         box.Position = UDim2.new(1, -104, 0.5, -12)
         box.BackgroundColor3 = T.Input
-        local valueKey = key == "PlayerESP" and "PlayerESPDistance"
-            or key == "MonsterESP" and "MonsterESPDistance"
-            or key == "Flashlight" and "FlashlightBrightness" or key
+        local valueKey = key == "Flashlight" and "FlashlightBrightness" or key
         box.Text = tostring(V[valueKey])
         box.Font = Enum.Font.GothamBold
         box.TextSize = 12
