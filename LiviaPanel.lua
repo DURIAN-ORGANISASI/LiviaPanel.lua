@@ -20,17 +20,12 @@ if CoreGui:FindFirstChild("LiviaPanel") then CoreGui.LiviaPanel:Destroy() end
 -- ==========================================
 local S = {
     Speed = false, Jump = false, Fly = false,
-    Fullbright = false, Flashlight = false,
-    PlayerESP = false, MonsterESP = false, NoClip = false,
+    Fullbright = false, Flashlight = false, NoClip = false,
 }
 local V = {
     Speed = 50, Jump = 100, Fly = 60,
     Fullbright = 5,
     FlashlightBrightness = 5,
-    PlayerESPDistance = 500,
-    MonsterESPDistance = 500,
-    PlayerESPColor = Color3.fromRGB(65, 190, 255),
-    MonsterESPColor = Color3.fromRGB(255, 75, 90),
 }
 
 local T = {
@@ -58,86 +53,6 @@ local bv, bg
 local noclipCache = setmetatable({}, {__mode = "k"})
 local flashlight
 local fullbrightOriginal
-local espObjects = {}
-local espScanElapsed = 0
-local espFolder = Instance.new("Folder")
-espFolder.Name = "LiviaESP"
-espFolder.Parent = CoreGui
-
-
-local function clearESP(model)
-    local entry = espObjects[model]
-    if not entry then return end
-    for _, beam in ipairs(entry.beams or {}) do beam:Destroy() end
-    for _, attachment in ipairs(entry.attachments or {}) do attachment:Destroy() end
-    espObjects[model] = nil
-end
-
-local function refreshESP()
-    if not S.PlayerESP and not S.MonsterESP then
-        for model in pairs(espObjects) do clearESP(model) end
-        return
-    end
-    local found = {}
-    local _, _, localRoot = getChar()
-    if not localRoot then return end
-    local playerCharacters = {}
-    for _, player in ipairs(Players:GetPlayers()) do
-        if player.Character then playerCharacters[player.Character] = true end
-    end
-    local links = {
-        {"Head","UpperTorso"},{"UpperTorso","LowerTorso"},
-        {"Head","Torso"},{"Torso","HumanoidRootPart"},
-        {"UpperTorso","LeftUpperArm"},{"LeftUpperArm","LeftLowerArm"},{"LeftLowerArm","LeftHand"},
-        {"UpperTorso","RightUpperArm"},{"RightUpperArm","RightLowerArm"},{"RightLowerArm","RightHand"},
-        {"LowerTorso","LeftUpperLeg"},{"LeftUpperLeg","LeftLowerLeg"},{"LeftLowerLeg","LeftFoot"},
-        {"LowerTorso","RightUpperLeg"},{"RightUpperLeg","RightLowerLeg"},{"RightLowerLeg","RightFoot"},
-        {"Torso","Left Arm"},{"Torso","Right Arm"},{"Torso","Left Leg"},{"Torso","Right Leg"},
-    }
-    for _, model in ipairs(workspace:GetDescendants()) do
-        if model:IsA("Model") then
-            local humanoid = model:FindFirstChildOfClass("Humanoid")
-            local root = model:FindFirstChild("HumanoidRootPart") or model:FindFirstChild("Head") or model.PrimaryPart
-            if humanoid and humanoid.Health > 0 and root and model ~= LP.Character then
-                local isPlayer = playerCharacters[model] == true
-                local distance = (root.Position - localRoot.Position).Magnitude
-                local enabled = isPlayer and S.PlayerESP or (not isPlayer and S.MonsterESP)
-                local maxDistance = isPlayer and V.PlayerESPDistance or V.MonsterESPDistance
-                if enabled and distance <= maxDistance then
-                    found[model] = true
-                    local color = isPlayer and V.PlayerESPColor or V.MonsterESPColor
-                    local entry = espObjects[model]
-                    if not entry then entry={beams={},attachments={},links={}} espObjects[model]=entry end
-                    for _, pair in ipairs(links) do
-                        local p0,p1=model:FindFirstChild(pair[1]),model:FindFirstChild(pair[2])
-                        if p0 and p1 and p0:IsA("BasePart") and p1:IsA("BasePart") then
-                            local key=pair[1].."|"..pair[2]
-                            local link=entry.links[key]
-                            if not link then
-                                local at0=Instance.new("Attachment"); at0.Parent=p0
-                                local at1=Instance.new("Attachment"); at1.Parent=p1
-                                local beam=Instance.new("Beam")
-                                beam.Name="LiviaESPBodyLine"
-                                beam.Attachment0=at0; beam.Attachment1=at1
-                                beam.FaceCamera=true; beam.Width0=0.045; beam.Width1=0.045
-                                beam.LightEmission=1; beam.Parent=espFolder
-                                link={beam=beam,a0=at0,a1=at1}
-                                entry.links[key]=link
-                                table.insert(entry.beams,beam)
-                                table.insert(entry.attachments,at0)
-                                table.insert(entry.attachments,at1)
-                            end
-                            link.beam.Color=ColorSequence.new(color)
-                        end
-                    end
-                end
-            end
-        end
-    end
-    for model in pairs(espObjects) do
-        if not found[model] or not model.Parent then clearESP(model) end
-    end
-end
 local function getChar()
     local char = LP.Character
     local hum = char and char:FindFirstChildOfClass("Humanoid")
@@ -234,16 +149,9 @@ local function applyChange(key, state)
     if key == "NoClip" and not state then restoreNoClip() end
     if key == "Fullbright" then setFullbright(state) end
     if key == "Flashlight" then setFlashlight(state) end
-    if key == "PlayerESP" or key == "MonsterESP" then refreshESP() end
 end
 
-conns[#conns + 1] = RunService.Heartbeat:Connect(function(dt)
-    espScanElapsed = espScanElapsed + dt
-    if espScanElapsed >= 0.75 then
-        espScanElapsed = 0
-        refreshESP()
-    end
-
+conns[#conns + 1] = RunService.Heartbeat:Connect(function()
     local _, hum, hrp = getChar()
     if not hum or not hrp then return end
 
@@ -279,7 +187,6 @@ conns[#conns + 1] = RunService.Heartbeat:Connect(function(dt)
         bv.Velocity = vel
     end
 
-    if S.Flashlight then setFlashlight(true) end
 end)
 
 conns[#conns + 1] = RunService.Stepped:Connect(function()
@@ -294,8 +201,14 @@ conns[#conns + 1] = RunService.Stepped:Connect(function()
     end
 end)
 
-conns[#conns + 1] = LP.CharacterAdded:Connect(function()
+conns[#conns + 1] = LP.CharacterAdded:Connect(function(char)
     noclipCache = setmetatable({}, {__mode = "k"})
+    if S.Flashlight then
+        task.defer(function()
+            local head = char:WaitForChild("Head", 5)
+            if head and S.Flashlight then setFlashlight(true) end
+        end)
+    end
 end)
 
 -- ==========================================
@@ -513,19 +426,15 @@ local function createRow(label, key, hasValue)
         corner(box, 8)
         box.FocusLost:Connect(function()
             local n = tonumber(box.Text)
-            local isDistance = key == "PlayerESP" or key == "MonsterESP"
             local isFlashlight = key == "Flashlight"
             local limited = key == "Fullbright" or isFlashlight
-            local valueKey = key == "PlayerESP" and "PlayerESPDistance"
-                or key == "MonsterESP" and "MonsterESPDistance"
-                or isFlashlight and "FlashlightBrightness" or key
-            local minValue = (limited or isDistance) and 1 or 0
-            local maxValue = isDistance and 500 or (limited and 10 or math.huge)
+            local valueKey = isFlashlight and "FlashlightBrightness" or key
+            local minValue = limited and 1 or 0
+            local maxValue = limited and 10 or math.huge
             if n and n >= minValue and n <= maxValue then
-                V[valueKey] = (isDistance or limited) and math.floor(n) or n
+                V[valueKey] = limited and math.floor(n) or n
                 if key == "Fullbright" and S.Fullbright then setFullbright(true) end
                 if isFlashlight then updateFlashlight() end
-                if isDistance then refreshESP() end
                 box.Text = tostring(V[valueKey])
             else
                 box.Text = tostring(V[valueKey])
@@ -552,44 +461,11 @@ local function createRow(label, key, hasValue)
     end)
 end
 
-local function createColorRow(label, key)
-    local row=Instance.new("Frame",Body)
-    row.Size=UDim2.new(1,0,0,38); row.BackgroundColor3=T.Card
-    corner(row,10); stroke(row)
-    local lb=Instance.new("TextLabel",row)
-    lb.Size=UDim2.new(1,-72,1,0); lb.Position=UDim2.new(0,12,0,0)
-    lb.BackgroundTransparency=1; lb.Text=label; lb.Font=Enum.Font.GothamBold
-    lb.TextSize=10; lb.TextColor3=T.Text; lb.TextXAlignment=Enum.TextXAlignment.Left
-    local box=Instance.new("TextBox",row)
-    box.Size=UDim2.new(0,58,0,24); box.Position=UDim2.new(1,-68,0.5,-12)
-    box.BackgroundColor3=T.Input
-    box.Text=string.format("#%02X%02X%02X",math.floor(V[key].R*255),math.floor(V[key].G*255),math.floor(V[key].B*255))
-    box.Font=Enum.Font.GothamBold; box.TextSize=10; box.TextColor3=T.Text
-    box.ClearTextOnFocus=false; corner(box,8)
-    box.FocusLost:Connect(function()
-        local hex=box.Text:gsub("#","")
-        if #hex==6 and hex:match("^%x%x%x%x%x%x$") then
-            local r,g,b=tonumber(hex:sub(1,2),16),tonumber(hex:sub(3,4),16),tonumber(hex:sub(5,6),16)
-            V[key]=Color3.fromRGB(r,g,b)
-            box.Text=string.format("#%02X%02X%02X",r,g,b)
-            refreshESP()
-        else
-            box.Text=string.format("#%02X%02X%02X",math.floor(V[key].R*255),math.floor(V[key].G*255),math.floor(V[key].B*255))
-        end
-    end)
-end
-
-
-
 createRow("SPEED", "Speed", true)
 createRow("JUMP", "Jump", true)
 createRow("FLY", "Fly", true)
 createRow("FULLBRIGHT (1-10)", "Fullbright", true)
 createRow("FLASHLIGHT", "Flashlight", true)
-createRow("ESP PLAYER", "PlayerESP", true)
-createColorRow("PLAYER ESP COLOR", "PlayerESPColor")
-createRow("ESP MONSTER", "MonsterESP", true)
-createColorRow("MONSTER ESP COLOR", "MonsterESPColor")
 createRow("NO CLIP", "NoClip", false)
 
 -- ==========================================
@@ -599,8 +475,6 @@ cleanup = function()
     for k in pairs(S) do
         if S[k] then S[k] = false applyChange(k, false) end
     end
-    for model in pairs(espObjects) do clearESP(model) end
-    if espFolder then espFolder:Destroy() end
     for _, c in ipairs(conns) do c:Disconnect() end
     conns = {}
     if sg then sg:Destroy() end
